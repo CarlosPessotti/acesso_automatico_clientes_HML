@@ -728,8 +728,83 @@ function renderDash() {
   document.getElementById('dtb').innerHTML = data;
 }
 
-function renderAllCharts() {
+/* ═══════════════════════════════════════
+   RENDER CHARTS
+   ═══════════════════════════════════════ */
+function renderCharts() {
   Object.values(charts).forEach(c => c && c.destroy());
+
+  // c1: Analistas x Liberados x Contratos
+  var c1Data = analistas.map(function(a) {
+    var lib = acessos.filter(function(x) { return x.analista_id === a.id && x.status === 'liberado' }).length;
+    var cont = clientes.filter(function(x) { return x.torre_id === a.torre_id }).length;
+    return { n: a.nome.split(' ')[0], lib: lib, cont: cont };
+  }).sort((a,b) => b.lib - a.lib).slice(0, 10);
+
+  charts.c1 = new Chart(document.getElementById('c1'), {
+    type: 'bar',
+    data: {
+      labels: c1Data.map(d => d.n),
+      datasets: [
+        { label: 'Liberados', data: c1Data.map(d => d.lib), backgroundColor: '#2ecc71' },
+        { label: 'Contratos na Torre', data: c1Data.map(d => d.cont), backgroundColor: '#ccc', type: 'line', fill: false, borderColor: '#aaa', borderDash: [5, 5] }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false }
+  });
+
+  // c2: Pendências por Torre
+  var pendenciasPorTorre = acessos.filter(a => a.status === 'pendente')
+    .reduce(function(acc, a) {
+      var nomeTorre = tNome(a.torre_id);
+      acc[nomeTorre] = (acc[nomeTorre] || 0) + 1;
+      return acc;
+    }, {});
+
+  charts.c2 = new Chart(document.getElementById('c2'), {
+    type: 'doughnut',
+    data: {
+      labels: Object.keys(pendenciasPorTorre),
+      datasets: [{ data: Object.values(pendenciasPorTorre) }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+  });
+
+  // c3: % Liberados por Torre
+  var liberadosPorTorre = torres.map(function(t) {
+    var ax = acessos.filter(a => a.torre_id === t.id);
+    var lib = ax.filter(a => a.status === 'liberado').length;
+    var pct = ax.length > 0 ? (lib / ax.length) * 100 : 0;
+    return { n: t.nome, v: pct };
+  }).sort((a,b) => b.v - a.v);
+
+  charts.c3 = new Chart(document.getElementById('c3'), {
+    type: 'bar',
+    data: {
+      labels: liberadosPorTorre.map(d => d.n),
+      datasets: [{ label: '% Liberados', data: liberadosPorTorre.map(d => d.v), backgroundColor: '#2ecc71' }]
+    },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+  });
+
+  // c4: Top 10 Clientes Pendências
+  var clientesPendentes = acessos.filter(a => a.status === 'pendente')
+    .reduce(function(acc, a) {
+      var nomeCliente = cNome(a.cliente_id);
+      acc[nomeCliente] = (acc[nomeCliente] || 0) + 1;
+      return acc;
+    }, {});
+  var topClientes = Object.entries(clientesPendentes).sort((a, b) => b[1] - a[1]).slice(0, 10);
+
+  charts.c4 = new Chart(document.getElementById('c4'), {
+    type: 'bar',
+    data: {
+      labels: topClientes.map(d => d[0]),
+      datasets: [{ label: 'Pendências', data: topClientes.map(d => d[1]), backgroundColor: '#e67e22' }]
+    },
+    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+  });
+}
   
   const analistasData = analistas.map(an => {
     const anAcessos = acessos.filter(ac => ac.analista_id === an.id && ac.status === 'liberado').length;
