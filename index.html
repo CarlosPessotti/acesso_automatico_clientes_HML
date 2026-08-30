@@ -652,13 +652,13 @@ function criticidadeLogin(dias) {
 }
 
 function renderAll() {
-  populateAllSelects();
-  renderDashboard();
+  populateSelects();
+  renderDash();
+  renderCharts();
   renderAnalistas();
   renderAcessos();
-  renderClientes();
-  renderLogins();
-  renderAllCharts();
+  renderClientes(); 
+  renderLogins();   
 }
 
 function populateAllSelects() {
