@@ -10,6 +10,19 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   
 <style>
+
+/* PAGINAÇÃO */
+.pag{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:1rem;flex-wrap:wrap}
+.pag button{padding:6px 12px;border:1.5px solid var(--gm);background:var(--w);color:var(--d);border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:var(--f)}
+.pag button:hover{border-color:var(--org);color:var(--org)}
+.pag button.act{background:var(--org);color:#fff;border-color:var(--org)}
+.pag button:disabled{opacity:.4;cursor:default}
+.pag span{font-size:.76rem;color:#888}
+.dark .pag button{background:#16213e;color:#e0e0e0;border-color:#3a3a5a}
+.dark .pag button:hover{border-color:var(--org);color:var(--org)}
+.dark .pag button.act{background:var(--org);color:#fff}
+.dark .pag span{color:#aaa}
+  
 :root{--org:#ff6b35;--gl:#E9E9E9;--gm:#CBCBCB;--w:#fff;--d:#1a1a1a;--grn:#2ecc71;--orng:#e67e22;--yel:#f1c40f;--f:'Segoe UI',system-ui,sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--f);background:var(--gl);color:var(--d);min-height:100vh;padding-bottom:40px}
@@ -194,6 +207,10 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-an" oninput="renderAnalistas()"></div>
   </div>
   <div class="tw"><h3>Lista de Analistas</h3><table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Contratos</th><th>Ações</th></tr></thead><tbody id="atb"></tbody></table></div>
+  <div class="tw"><h3>Lista de Analistas</h3>
+<table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Contratos</th><th>Ações</th></tr></thead><tbody id="atb"></tbody></table>
+<div class="pag" id="pag-analistas"></div>
+</div>
 </div>
 
 <!-- ACESSOS -->
@@ -223,6 +240,10 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <button onclick="exportAcessos('pdf')">📕 PDF</button>
   </div>
   <div class="tw"><h3>Lista de Acessos</h3><table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Status</th><th>Observação</th><th>Data</th><th>Ações</th></tr></thead><tbody id="xtb"></tbody></table></div>
+<div class="tw"><h3>Lista de Acessos</h3>
+<table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Status</th><th>Observação</th><th>Data</th><th>Ações</th></tr></thead><tbody id="xtb"></tbody></table>
+<div class="pag" id="pag-acessos"></div>
+</div>
 </div>
 
 <!-- CLIENTES -->
@@ -241,6 +262,10 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-cn" oninput="renderClientes()"></div>
   </div>
   <div class="tw"><h3>Lista de Clientes</h3><table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Ações</th></tr></thead><tbody id="ctb"></tbody></table></div>
+<div class="tw"><h3>Lista de Clientes</h3>
+<table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Ações</th></tr></thead><tbody id="ctb"></tbody></table>
+<div class="pag" id="pag-clientes"></div>
+</div>
 </div>
 
 <!-- ÚLTIMO LOGIN -->
@@ -272,11 +297,17 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <button onclick="exportLogins('pdf')">📕 PDF</button>
   </div>
   <div class="tw"><h3>Registros de Último Login</h3><table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Último Login</th><th>Dias</th><th>Status</th><th>Ações</th></tr></thead><tbody id="l-tb"></tbody></table></div>
+<div class="tw"><h3>Registros de Último Login</h3>
+<table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Último Login</th><th>Dias</th><th>Status</th><th>Ações</th></tr></thead><tbody id="l-tb"></tbody></table>
+<div class="pag" id="pag-logins"></div>
+</div>
 </div>
 
 </div>
 
 <script>
+
+
 const SB = 'https://nmuveemszyfvqxcnpoog.supabase.co/rest/v1';
 const AK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdXZlZW1zenlmdnF4Y25wb29nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzAxMzQsImV4cCI6MjEwMzYwNjEzNH0.kNtTNLQhbzyeg2qvCGPg0ztT9NzTgo2ayzHLYnyE-2E';
 const HD = {'apikey': AK, 'Authorization': 'Bearer ' + AK, 'Content-Type': 'application/json', 'Prefer': 'return=representation'};
@@ -288,7 +319,49 @@ let editingAnalistaId = null;
 let editingClienteId = null;
 let editingAcessoId = null;
 let editingLoginId = null;
+/* ═══════════════════════════════════════
+   PAGINAÇÃO
+   ═══════════════════════════════════════ */
+var PG_SIZE = 20;
+var pgAnalistas = 1, pgAcessos = 1, pgClientes = 1, pgLogins = 1;
 
+function renderPag(containerId, totalItems, currentPage, onPageChange) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var totalPages = Math.ceil(totalItems / PG_SIZE);
+  if (totalPages <= 1) { el.innerHTML = ''; return; }
+
+  var html = '';
+  html += '<button ' + (currentPage <= 1 ? 'disabled' : '') + ' onclick="' + onPageChange + '(' + (currentPage - 1) + ')">◀</button>';
+
+  var start = Math.max(1, currentPage - 2);
+  var end = Math.min(totalPages, currentPage + 2);
+
+  if (start > 1) {
+    html += '<button onclick="' + onPageChange + '(1)">1</button>';
+    if (start > 2) html += '<span>…</span>';
+  }
+
+  for (var i = start; i <= end; i++) {
+    html += '<button class="' + (i === currentPage ? 'act' : '') + '" onclick="' + onPageChange + '(' + i + ')">' + i + '</button>';
+  }
+
+  if (end < totalPages) {
+    if (end < totalPages - 1) html += '<span>…</span>';
+    html += '<button onclick="' + onPageChange + '(' + totalPages + ')">' + totalPages + '</button>';
+  }
+
+  html += '<button ' + (currentPage >= totalPages ? 'disabled' : '') + ' onclick="' + onPageChange + '(' + (currentPage + 1) + ')">▶</button>';
+  html += '<span style="margin-left:8px">' + totalItems + ' registros</span>';
+
+  el.innerHTML = html;
+}
+
+function paginate(arr, page) {
+  var s = (page - 1) * PG_SIZE;
+  return arr.slice(s, s + PG_SIZE);
+}
+  
 function toast(m, t = 'ok') {
   const d = document.createElement('div');
   d.className = 'tt ' + t;
@@ -480,22 +553,34 @@ function renderAllCharts() {
   charts.c4 = new Chart(document.getElementById('c4'), {type: 'bar', data: {labels: pendPorCliente.map(d => d.cliente), datasets: [{label: 'Pendências', data: pendPorCliente.map(d => d.pends), backgroundColor: '#e67e22'}]}, options: {indexAxis: 'y', maintainAspectRatio: true, responsive: true}});
 }
 
-function renderAnalistas() {
-  const fTorre = document.getElementById('f-at').value;
-  const fNome = document.getElementById('f-an').value.toLowerCase();
-  const data = analistas
-    .filter(a => (!fTorre || a.torre_id == fTorre) && (!fNome || a.nome.toLowerCase().includes(fNome)))
-    .map(a => `<tr id="an-row-${a.id}" ${editingAnalistaId === a.id ? 'class="editing-row"' : ''}>
-      <td>${a.id}</td><td>${a.nome}</td><td>${tNome(a.torre_id)}</td>
-      <td>${clientes.filter(c => c.torre_id === a.torre_id).length}</td>
-      <td>
-        <button class="bs bdo" onclick='editAnalista(${JSON.stringify(a)})'>Editar</button>
-        <button class="bs bdr" onclick="deleteAnalista(${a.id},'${a.nome.replace(/'/g, "\\'")}')">Excluir</button>
-      </td>
-     </tr>`).join('');
-  document.getElementById('atb').innerHTML = data;
+ffunction renderAnalistas() {
+  var ft = document.getElementById('f-at').value;
+  var fn = document.getElementById('f-an').value.toLowerCase();
+  var filtered = analistas.filter(function(a) {
+    if (ft && a.torre_id != ft) return false;
+    if (fn && a.nome.toLowerCase().indexOf(fn) === -1) return false;
+    return true;
+  });
+
+  // Reset pra pag 1 se filtro mudou e pagina atual > total
+  var totalPages = Math.ceil(filtered.length / PG_SIZE);
+  if (pgAnalistas > totalPages) pgAnalistas = 1;
+
+  var paged = paginate(filtered, pgAnalistas);
+  document.getElementById('atb').innerHTML = paged.length === 0
+    ? '<tr><td colspan="5" style="text-align:center;color:#999;padding:2rem">Nenhum analista encontrado</td></tr>'
+    : paged.map(function(a) {
+        var torre = tNome(a.torre_id);
+        var contratos = clientes.filter(function(c) { return c.torre_id === a.torre_id }).length;
+        return '<tr' + (editingAnalistaId === a.id ? ' class="editing-row"' : '') + '>' +
+          '<td>' + a.id + '</td><td>' + a.nome + '</td><td>' + torre + '</td><td>' + contratos + '</td>' +
+          '<td><button class="bs bdo" onclick="editAnalista(' + a.id + ')">✏️</button> <button class="bs bdr" onclick="delAnalista(' + a.id + ')">🗑️</button></td></tr>';
+      }).join('');
+
+  renderPag('pag-analistas', filtered.length, pgAnalistas, 'goPageAnalistas');
 }
 
+function goPageAnalistas(p) { pgAnalistas = p; renderAnalistas(); }
 async function addAnalista() {
   const nome = document.getElementById('i-an').value.trim();
   const torre_id = document.getElementById('i-at').value;
@@ -546,19 +631,30 @@ function deleteAnalista(id, nome) {
 }
 
 function renderClientes() {
-  const fTorre = document.getElementById('f-ct').value;
-  const fNome = document.getElementById('f-cn').value.toLowerCase();
-  const data = clientes
-    .filter(c => (!fTorre || c.torre_id == fTorre) && (!fNome || c.nome.toLowerCase().includes(fNome)))
-    .map(c => `<tr id="cl-row-${c.id}" ${editingClienteId === c.id ? 'class="editing-row"' : ''}>
-      <td>${c.id}</td><td>${c.nome}</td><td>${tNome(c.torre_id)}</td>
-      <td>
-        <button class="bs bdo" onclick='editCliente(${JSON.stringify(c)})'>Editar</button>
-        <button class="bs bdr" onclick="deleteCliente(${c.id},'${c.nome.replace(/'/g, "\\'")}')">Excluir</button>
-      </td>
-     </tr>`).join('');
-  document.getElementById('ctb').innerHTML = data;
+  var ft = document.getElementById('f-ct').value;
+  var fn = document.getElementById('f-cn').value.toLowerCase();
+  var filtered = clientes.filter(function(c) {
+    if (ft && c.torre_id != ft) return false;
+    if (fn && c.nome.toLowerCase().indexOf(fn) === -1) return false;
+    return true;
+  });
+
+  var totalPages = Math.ceil(filtered.length / PG_SIZE);
+  if (pgClientes > totalPages) pgClientes = 1;
+
+  var paged = paginate(filtered, pgClientes);
+  document.getElementById('ctb').innerHTML = paged.length === 0
+    ? '<tr><td colspan="4" style="text-align:center;color:#999;padding:2rem">Nenhum cliente encontrado</td></tr>'
+    : paged.map(function(c) {
+        return '<tr>' +
+          '<td>' + c.id + '</td><td>' + c.nome + '</td><td>' + tNome(c.torre_id) + '</td>' +
+          '<td><button class="bs bdr" onclick="delCliente(' + c.id + ')">🗑️</button></td></tr>';
+      }).join('');
+
+  renderPag('pag-clientes', filtered.length, pgClientes, 'goPageClientes');
 }
+
+function goPageClientes(p) { pgClientes = p; renderClientes(); }
 
 async function addCliente() {
   const nome = document.getElementById('i-cn').value.trim();
@@ -610,33 +706,39 @@ function deleteCliente(id, nome) {
 }
 
 function renderAcessos() {
-  const fTorre = document.getElementById('f-xt').value;
-  const fStatus = document.getElementById('f-xs').value;
-  const fDi = document.getElementById('f-di').value;
-  const fDf = document.getElementById('f-df').value;
-  const data = acessos
-    .filter(a => {
-      if (fTorre && a.torre_id != fTorre) return false;
-      if (fStatus && a.status !== fStatus) return false;
-      if (fDi && new Date(a.updated_at) < new Date(fDi)) return false;
-      if (fDf && new Date(a.updated_at) > new Date(fDf + 'T23:59:59')) return false;
-      return true;
-    })
-    .map(a => {
-      const bdCls = a.status === 'liberado' ? 'bg' : (a.status === 'pendente' ? 'br' : 'bo');
-      return `<tr id="ac-row-${a.id}" ${editingAcessoId === a.id ? 'class="editing-row"' : ''}>
-        <td>${a.id}</td><td>${tNome(a.torre_id)}</td><td>${aNome(a.analista_id)}</td><td>${cNome(a.cliente_id)}</td>
-        <td><span class="bd ${bdCls}">${a.status}</span></td>
-        <td>${a.observacao || '-'}</td><td>${formatDate(a.updated_at)}</td>
-        <td>
-          <button class="bs bdo" onclick='editAcesso(${JSON.stringify(a)})'>Editar</button>
-          <button class="bs bdr" onclick="deleteAcesso(${a.id})">Excluir</button>
-        </td>
-       </tr>`;
-    }).join('');
-  document.getElementById('xtb').innerHTML = data;
+  var ft = document.getElementById('f-xt').value;
+  var fs = document.getElementById('f-xs').value;
+  var di = document.getElementById('f-di').value;
+  var df = document.getElementById('f-df').value;
+  var filtered = acessos.filter(function(a) {
+    if (ft && a.torre_id != ft) return false;
+    if (fs && a.status !== fs) return false;
+    if (di && a.created_at && a.created_at.slice(0, 10) < di) return false;
+    if (df && a.created_at && a.created_at.slice(0, 10) > df) return false;
+    return true;
+  });
+
+  var totalPages = Math.ceil(filtered.length / PG_SIZE);
+  if (pgAcessos > totalPages) pgAcessos = 1;
+
+  var paged = paginate(filtered, pgAcessos);
+  var statusMap = { liberado: ['bg', 'Liberado'], pendente: ['br', 'Pendente'], em_validacao: ['bo', 'Em Validação'] };
+  document.getElementById('xtb').innerHTML = paged.length === 0
+    ? '<tr><td colspan="8" style="text-align:center;color:#999;padding:2rem">Nenhum acesso encontrado</td></tr>'
+    : paged.map(function(a) {
+        var st = statusMap[a.status] || ['bo', a.status];
+        return '<tr' + (editingAcessoId === a.id ? ' class="editing-row"' : '') + '>' +
+          '<td>' + a.id + '</td><td>' + tNome(a.torre_id) + '</td><td>' + aNome(a.analista_id) + '</td><td>' + cNome(a.cliente_id) + '</td>' +
+          '<td><span class="bd ' + st[0] + '">' + st[1] + '</span></td>' +
+          '<td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (a.observacao || '—') + '</td>' +
+          '<td>' + formatDate(a.created_at) + '</td>' +
+          '<td><button class="bs bdo" onclick="editAcesso(' + a.id + ')">✏️</button> <button class="bs bdr" onclick="delAcesso(' + a.id + ')">🗑️</button></td></tr>';
+      }).join('');
+
+  renderPag('pag-acessos', filtered.length, pgAcessos, 'goPageAcessos');
 }
 
+function goPageAcessos(p) { pgAcessos = p; renderAcessos(); }
 async function addAcesso() {
   const torre_id = document.getElementById('i-xt').value;
   const analista_id = document.getElementById('i-xa').value;
@@ -699,47 +801,44 @@ function deleteAcesso(id) {
 }
 
 function renderLogins() {
-  const fTorre = document.getElementById('l-f-torre').value;
-  const fCrit = document.getElementById('l-f-crit').value;
-  
-  // Ordena por criticidade: Crítico (999), Atenção (500), OK (0)
-  const sorted = logins
-    .filter(l => (!fTorre || l.torre_id == fTorre))
-    .map(l => {
-      const dias = diasSemLogin(l.ultimo_login);
-      const crit = criticidadeLogin(dias);
-      return {...l, dias, crit};
-    })
-    .sort((a, b) => {
-      // Ordena: crítico > atenção > ok
-      const peso = {crit: 999, warn: 500, ok: 0};
-      return peso[b.crit.cls] - peso[a.crit.cls];
-    })
-    .filter(l => (!fCrit || l.crit.cls === fCrit));
+  var ft = document.getElementById('l-f-torre').value;
+  var fc = document.getElementById('l-f-crit').value;
+  var filtered = logins.filter(function(l) {
+    if (ft && l.torre_id != ft) return false;
+    if (fc) {
+      var d = diasSemLogin(l.ultimo_login);
+      var cr = criticidadeLogin(d);
+      if (cr.cls !== fc) return false;
+    }
+    return true;
+  });
 
-  // Atualiza os cards de resumo
-  const criticos = sorted.filter(l => l.crit.cls === 'crit').length;
-  const atencao = sorted.filter(l => l.crit.cls === 'warn').length;
-  const ok = sorted.filter(l => l.crit.cls === 'ok').length;
-  document.getElementById('l-k1').textContent = criticos;
-  document.getElementById('l-k2').textContent = atencao;
-  document.getElementById('l-k3').textContent = ok;
+  var totalPages = Math.ceil(filtered.length / PG_SIZE);
+  if (pgLogins > totalPages) pgLogins = 1;
 
-  const data = sorted.map(l => `<tr id="lg-row-${l.id}">
-    <td>${l.id}</td>
-    <td>${tNome(l.torre_id)}</td>
-    <td>${aNome(l.analista_id)}</td>
-    <td>${cNome(l.cliente_id)}</td>
-    <td>${formatDate(l.ultimo_login)}</td>
-    <td>${l.dias}</td>
-    <td><span class="badge ${l.crit.cls}">${l.crit.label}</span></td>
-    <td>
-      <button class="bs bdo" onclick='editLogin(${JSON.stringify(l)})'>Editar</button>
-      <button class="bs bdr" onclick="deleteLogin(${l.id})">Excluir</button>
-    </td>
-   </tr>`).join('');
-  document.getElementById('l-tb').innerHTML = data;
+  // KPIs
+  var allDias = logins.map(function(l) { return diasSemLogin(l.ultimo_login); });
+  document.getElementById('l-k1').textContent = allDias.filter(function(d) { return d > 10; }).length;
+  document.getElementById('l-k2').textContent = allDias.filter(function(d) { return d >= 5 && d <= 10; }).length;
+  document.getElementById('l-k3').textContent = allDias.filter(function(d) { return d < 5; }).length;
+
+  var paged = paginate(filtered, pgLogins);
+  document.getElementById('l-tb').innerHTML = paged.length === 0
+    ? '<tr><td colspan="8" style="text-align:center;color:#999;padding:2rem">Nenhum registro encontrado</td></tr>'
+    : paged.map(function(l) {
+        var d = diasSemLogin(l.ultimo_login);
+        var cr = criticidadeLogin(d);
+        return '<tr' + (editingLoginId === l.id ? ' class="editing-row"' : '') + '>' +
+          '<td>' + l.id + '</td><td>' + tNome(l.torre_id) + '</td><td>' + aNome(l.analista_id) + '</td><td>' + cNome(l.cliente_id) + '</td>' +
+          '<td>' + formatDate(l.ultimo_login) + '</td><td>' + d + 'd</td>' +
+          '<td><span class="badge ' + cr.cls + '">' + cr.txt + '</span></td>' +
+          '<td><button class="bs bdo" onclick="editLogin(' + l.id + ')">✏️</button> <button class="bs bdr" onclick="delLogin(' + l.id + ')">🗑️</button></td></tr>';
+      }).join('');
+
+  renderPag('pag-logins', filtered.length, pgLogins, 'goPageLogins');
 }
+
+function goPageLogins(p) { pgLogins = p; renderLogins(); }
 
 async function addLogin() {
   const torre_id = document.getElementById('l-i-torre').value;
