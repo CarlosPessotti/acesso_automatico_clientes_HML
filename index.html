@@ -3,37 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestão de Acessos — Torres</title>
+<title>Gestão de Acessos — Torres HML</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
-:root{--red:#BF0411;--rd:#C00000;--gl:#E9E9E9;--gm:#CBCBCB;--w:#fff;--d:#1a1a1a;--grn:#2ecc71;--org:#e67e22;--yel:#f1c40f;--f:'Segoe UI',system-ui,sans-serif}
+:root{--org:#ff6b35;--gl:#E9E9E9;--gm:#CBCBCB;--w:#fff;--d:#1a1a1a;--grn:#2ecc71;--orng:#e67e22;--yel:#f1c40f;--f:'Segoe UI',system-ui,sans-serif}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--f);background:var(--gl);color:var(--d);min-height:100vh;padding-bottom:40px}
 
-.nav{background:linear-gradient(135deg,var(--red),var(--rd));padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;box-shadow:0 2px 12px rgba(0,0,0,.15);position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:8px}
+.nav{background:linear-gradient(135deg,var(--org),#ff8c5a);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;box-shadow:0 2px 12px rgba(0,0,0,.15);position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:8px}
 .nav h1{color:var(--w);font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px}
-.nav h1 .env-badge{font-size:.7rem;padding:3px 8px;border-radius:4px;font-weight:700;background:var(--yel);color:var(--d)}
-.nav h1 .env-badge.prod{background:#e74c3c;color:var(--w)}
+.nav h1 .env-badge{font-size:.7rem;padding:3px 8px;border-radius:4px;font-weight:700;background:#ffd93d;color:#1a1a1a}
 .nav nav{display:flex;gap:4px;flex-wrap:wrap}
 .nav nav button{background:rgba(255,255,255,.12);color:var(--w);border:1px solid rgba(255,255,255,.2);padding:8px 16px;border-radius:6px;cursor:pointer;font-size:.82rem;font-weight:500;transition:.2s}
-.nav nav button:hover,.nav nav button.act{background:var(--w);color:var(--red);font-weight:700}
-.env-selector{padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:var(--w);font-size:.8rem;font-weight:600;cursor:pointer;transition:.2s}
-.env-selector:hover{background:rgba(255,255,255,.2)}
+.nav nav button:hover,.nav nav button.act{background:var(--w);color:var(--org);font-weight:700}
 
 .wrap{max-width:1440px;margin:0 auto;padding:1.5rem}
 .pg{display:none}.pg.act{display:block}
 
 .kr{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:1rem;margin-bottom:1.5rem}
-.kc{background:var(--w);border-radius:12px;padding:1.1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid var(--red)}
-.kc .n{font-size:2rem;font-weight:800;color:var(--red)}.kc .l{font-size:.76rem;color:#666;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.kc{background:var(--w);border-radius:12px;padding:1.1rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid var(--org)}
+.kc .n{font-size:2rem;font-weight:800;color:var(--org)}.kc .l{font-size:.76rem;color:#666;margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
 .kc.g{border-left-color:var(--grn)}.kc.g .n{color:var(--grn)}
-.kc.o{border-left-color:var(--org)}.kc.o .n{color:var(--org)}
+.kc.o{border-left-color:var(--orng)}.kc.o .n{color:var(--orng)}
 .kc.crit{border-left-color:#dc3545}.kc.crit .n{color:#dc3545}
-.kc.warn{border-left-color:var(--org)}.kc.warn .n{color:var(--org)}
+.kc.warn{border-left-color:var(--orng)}.kc.warn .n{color:var(--orng)}
 .kc.ok{border-left-color:var(--grn)}.kc.ok .n{color:var(--grn)}
 
 .cg{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem}
@@ -44,7 +40,7 @@ body{font-family:var(--f);background:var(--gl);color:var(--d);min-height:100vh;p
 .tw{background:var(--w);border-radius:12px;padding:1.2rem;box-shadow:0 2px 8px rgba(0,0,0,.06);overflow-x:auto;margin-bottom:1.5rem}
 .tw h3{font-size:.9rem;margin-bottom:1rem}
 table{width:100%;border-collapse:collapse;font-size:.83rem}
-thead th{background:var(--red);color:var(--w);padding:10px 12px;text-align:left;font-weight:600;white-space:nowrap}
+thead th{background:var(--org);color:var(--w);padding:10px 12px;text-align:left;font-weight:600;white-space:nowrap}
 tbody td{padding:9px 12px;border-bottom:1px solid var(--gl)}
 tbody tr:hover{background:#fff5f5}
 tbody tr.editing-row{background:#fff8e1 !important}
@@ -56,20 +52,20 @@ tbody tr.editing-row{background:#fff8e1 !important}
 .badge.ok{background:#d4edda;color:#155724}
 
 .fc{background:var(--w);border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:1.5rem}
-.fc h3{margin-bottom:1rem;font-size:1rem;color:var(--red)}
-.fc.editing{border:2px solid var(--org);box-shadow:0 0 0 3px rgba(230,126,34,.15)}.fc.editing h3{color:var(--org)}
+.fc h3{margin-bottom:1rem;font-size:1rem;color:var(--org)}
+.fc.editing{border:2px solid var(--orng);box-shadow:0 0 0 3px rgba(230,126,34,.15)}.fc.editing h3{color:var(--orng)}
 
 .fr{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1rem}
 .fg{display:flex;flex-direction:column;gap:4px}
 .fg label{font-size:.76rem;font-weight:600;color:#444;text-transform:uppercase;letter-spacing:.3px}
 .fg input,.fg select,.fg textarea{padding:9px 12px;border:1.5px solid var(--gm);border-radius:8px;font-size:.87rem;transition:.2s;font-family:var(--f)}
-.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--red)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--org)}
 .fg textarea{resize:vertical;min-height:60px}
 
 .btn{padding:10px 22px;border:none;border-radius:8px;font-size:.83rem;font-weight:700;cursor:pointer;transition:.2s;font-family:var(--f);display:inline-flex;align-items:center;gap:6px}
-.bp{background:var(--red);color:var(--w)}.bp:hover{background:var(--rd);transform:translateY(-1px)}
+.bp{background:var(--org);color:var(--w)}.bp:hover{background:#ff8c5a;transform:translateY(-1px)}
 .bs{padding:5px 12px;font-size:.75rem;border:none;border-radius:6px;cursor:pointer;font-weight:600;color:var(--w)}
-.bdr{background:#dc3545}.bdg{background:var(--grn)}.bdo{background:var(--org)}
+.bdr{background:#dc3545}.bdg{background:var(--grn)}.bdo{background:var(--orng)}
 .bc{background:#666;color:var(--w);margin-left:8px}.bc:hover{background:#555}
 
 .fb{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1.5rem;background:var(--w);padding:1rem 1.2rem;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
@@ -88,12 +84,12 @@ tbody tr.editing-row{background:#fff8e1 !important}
 .modal-bg{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:10000;display:none;align-items:center;justify-content:center}
 .modal-bg.show{display:flex}
 .modal{background:var(--w);border-radius:14px;padding:2rem;max-width:420px;width:90%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.3)}
-.modal h3{margin-bottom:.8rem;color:var(--red)}.modal p{font-size:.9rem;color:#555;margin-bottom:1.5rem}
+.modal h3{margin-bottom:.8rem;color:var(--org)}.modal p{font-size:.9rem;color:#555;margin-bottom:1.5rem}
 .modal .btns{display:flex;gap:1rem;justify-content:center}
 
 .export-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
-.export-bar button{padding:7px 14px;border:1.5px solid var(--red);background:var(--w);color:var(--red);border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:var(--f);display:inline-flex;align-items:center;gap:5px}
-.export-bar button:hover{background:var(--red);color:var(--w)}
+.export-bar button{padding:7px 14px;border:1.5px solid var(--org);background:var(--w);color:var(--org);border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:var(--f);display:inline-flex;align-items:center;gap:5px}
+.export-bar button:hover{background:var(--org);color:var(--w)}
 
 @media(max-width:768px){.cg{grid-template-columns:1fr}.nav{padding:8px;flex-wrap:wrap;height:auto;gap:8px}.nav nav button{padding:6px 10px;font-size:.72rem}.fr{grid-template-columns:1fr}}
 </style>
@@ -101,11 +97,7 @@ tbody tr.editing-row{background:#fff8e1 !important}
 <body>
 
 <div class="nav">
-  <h1>🔐 Gestão de Acessos — Torres <span class="env-badge" id="env-badge">HML</span></h1>
-  <select class="env-selector" id="env-selector" onchange="switchEnv(this.value)">
-    <option value="hml">🧪 Homologação (LAB)</option>
-    <option value="prod">🚀 Produção (PRD)</option>
-  </select>
+  <h1>🔐 Gestão de Acessos — Torres <span class="env-badge">HML</span></h1>
   <nav>
     <button class="act" data-p="dashboard" onclick="go(this)">📊 Dashboard</button>
     <button data-p="analistas" onclick="go(this)">👤 Analistas</button>
@@ -165,6 +157,7 @@ tbody tr.editing-row{background:#fff8e1 !important}
       <div class="fg"><label>Torre</label><select id="i-at"></select></div>
     </div>
     <button class="btn bp" id="btn-add-analista" onclick="addAnalista()">Cadastrar</button>
+    <button class="btn bc" id="btn-cancel-analista" style="display:none" onclick="cancelEditAnalista()">Cancelar</button>
   </div>
   <div class="fb">
     <div class="fg"><label>Filtrar por Torre</label><select id="f-at" onchange="renderAnalistas()"></select></div>
@@ -181,66 +174,11 @@ tbody tr.editing-row{background:#fff8e1 !important}
       <div class="fg"><label>Torre</label><select id="i-xt"></select></div>
       <div class="fg"><label>Analista</label><select id="i-xa"></select></div>
       <div class="fg"><label>Cliente</label><select id="i-xc"></select></div>
-      <div class="fg"><label>Status</label><select id="i-xs"><option value="pendente">Pendente</option><option value="liberado">Liberado</option></select></div>
-    </div>
-    <div class="fg"><label>Observação</label><textarea id="i-xo"></textarea></div>
-    <button class="btn bp" id="btn-add-acesso" onclick="addAcesso()">Cadastrar</button>
-  </div>
-  <div class="fb">
-    <div class="fg"><label>Filtrar por Torre</label><select id="f-xt" onchange="renderAcessos()"></select></div>
-    <div class="fg"><label>Filtrar por Status</label><select id="f-xs" onchange="renderAcessos()"><option value="">Todos</option><option value="liberado">Liberado</option><option value="pendente">Pendente</option></select></div>
-  </div>
-  <div class="tw"><h3>Lista de Acessos</h3><table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Status</th><th>Observação</th><th>Data</th><th>Ações</th></tr></thead><tbody id="xtb"></tbody></table></div>
-</div>
-
-<!-- CLIENTES -->
-<div class="pg" id="pg-clientes">
-  <div class="fc" id="form-cliente">
-    <h3 id="form-cliente-title">➕ Cadastrar Cliente</h3>
-    <div class="fr">
-      <div class="fg"><label>Nome</label><input type="text" id="i-cn"></div>
-      <div class="fg"><label>Torre</label><select id="i-ct"></select></div>
-    </div>
-    <button class="btn bp" id="btn-add-cliente" onclick="addCliente()">Cadastrar</button>
-  </div>
-  <div class="fb">
-    <div class="fg"><label>Filtrar por Torre</label><select id="f-ct" onchange="renderClientes()"></select></div>
-    <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-cn" oninput="renderClientes()"></div>
-  </div>
-  <div class="tw"><h3>Lista de Clientes</h3><table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Ações</th></tr></thead><tbody id="ctb"></tbody></table></div>
-</div>
-
-<!-- ÚLTIMO LOGIN -->
-<div class="pg" id="pg-ultimo-login">
-  <div class="fc" id="form-login">
-    <h3 id="form-login-title">➕ Registrar Último Login</h3>
-    <div class="fr">
-      <div class="fg"><label>Torre</label><select id="l-i-torre"></select></div>
-      <div class="fg"><label>Analista</label><select id="l-i-analista"></select></div>
-      <div class="fg"><label>Cliente</label><select id="l-i-cliente"></select></div>
-    </div>
-    <button class="btn bp" id="btn-add-login" onclick="addLogin()">Registrar</button>
-  </div>
-  <div class="fb">
-    <div class="fg"><label>Filtrar por Torre</label><select id="l-f-torre" onchange="renderLogins()"></select></div>
-    <div class="fg"><label>Criticidade</label><select id="l-f-crit" onchange="renderLogins()"><option value="">Todas</option><option value="crit">🔴 Crítico</option><option value="warn">🟡 Atenção</option><option value="ok">🟢 OK</option></select></div>
-  </div>
-  <div class="kr" id="login-summary"></div>
-  <div class="tw"><h3>Registro de Últimos Logins</h3><table><thead><tr><th>Torre</th><th>Analista</th><th>Cliente</th><th>Último Login</th><th>Dias</th><th>Criticidade</th><th>Ações</th></tr></thead><tbody id="ltb"></tbody></table></div>
-</div>
-
-</div>
-
-<script>
-
-## PARTE 2 de 3: Continuação do HTML (Cole logo após a PARTE 1)
-
-```html
-i-xc"></select></div>
       <div class="fg"><label>Status</label><select id="i-xs"><option value="pendente">Pendente</option><option value="liberado">Liberado</option><option value="em_validacao">Em Validação</option></select></div>
     </div>
     <div class="fg"><label>Observação</label><textarea id="i-xo"></textarea></div>
     <button class="btn bp" id="btn-add-acesso" onclick="addAcesso()">Cadastrar</button>
+    <button class="btn bc" id="btn-cancel-acesso" style="display:none" onclick="cancelEditAcesso()">Cancelar</button>
   </div>
   <div class="fb">
     <div class="fg"><label>Filtrar por Torre</label><select id="f-xt" onchange="renderAcessos()"></select></div>
@@ -266,6 +204,7 @@ i-xc"></select></div>
       <div class="fg"><label>Torre</label><select id="i-ct"></select></div>
     </div>
     <button class="btn bp" id="btn-add-cliente" onclick="addCliente()">Cadastrar</button>
+    <button class="btn bc" id="btn-cancel-cliente" style="display:none" onclick="cancelEditCliente()">Cancelar</button>
   </div>
   <div class="fb">
     <div class="fg"><label>Filtrar por Torre</label><select id="f-ct" onchange="renderClientes()"></select></div>
@@ -290,6 +229,7 @@ i-xc"></select></div>
       <div class="fg"><label>Data/Hora Login</label><input type="datetime-local" id="l-i-data"></div>
     </div>
     <button class="btn bp" id="btn-add-login" onclick="addLogin()">Registrar</button>
+    <button class="btn bc" id="btn-cancel-login" style="display:none" onclick="cancelEditLogin()">Cancelar</button>
   </div>
   <div class="fb">
     <div class="fg"><label>Filtrar por Torre</label><select id="l-f-torre" onchange="renderLogins()"></select></div>
@@ -307,31 +247,9 @@ i-xc"></select></div>
 </div>
 
 <script>
-
-/* ═══════════════════════════════════════
-   CONFIGURAÇÃO DE AMBIENTES
-   ═══════════════════════════════════════ */
-const ENVS = {
-  prod: {
-    url: 'https://mwwlimmkiphwdeleewzd.supabase.co/rest/v1',
-    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im13d2xpbW1raXBod2RlbGVld3pkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc3ODIwNTcsImV4cCI6MjEwMzM1ODA1N30.HKGRI3toztOUThxXnIXFqFcKnjPPi4c1WzYq-2tz3Zc'
-  },
-  hml: {
-    url: 'https://nmuveemszyfvqxcnpoog.supabase.co/rest/v1',
-    key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdXZlZW1zenlmdnF4Y25wb29nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzAxMzQsImV4cCI6MjEwMzYwNjEzNH0.kNtTNLQhbzyeg2qvCGPg0ztT9NzTgo2ayzHLYnyE-2E'
-  }
-};
-
-let currentEnv = localStorage.getItem('current_env') || 'hml';
-let SB = ENVS[currentEnv].url;
-let AK = ENVS[currentEnv].key;
-let HD = {'apikey': AK, 'Authorization': 'Bearer ' + AK, 'Content-Type': 'application/json', 'Prefer': 'return=representation'};
-
-const EJS_PK = 'iU9eUIjC9pv_1RRco';
-const EJS_SVC = 'service_torres';
-const EJS_TPL_LIB = 'acesso_liberado_service';
-const EJS_TPL_PEND = 'acesso_pendente_service';
-emailjs.init(EJS_PK);
+const SB = 'https://nmuveemszyfvqxcnpoog.supabase.co/rest/v1';
+const AK = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tdXZlZW1zenlmdnF4Y25wb29nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgwMzAxMzQsImV4cCI6MjEwMzYwNjEzNH0.kNtTNLQhbzyeg2qvCGPg0ztT9NzTgo2ayzHLYnyE-2E';
+const HD = {'apikey': AK, 'Authorization': 'Bearer ' + AK, 'Content-Type': 'application/json', 'Prefer': 'return=representation'};
 
 let torres = [], analistas = [], clientes = [], acessos = [], logins = [];
 let charts = {c1: null, c2: null, c3: null, c4: null};
@@ -341,35 +259,6 @@ let editingClienteId = null;
 let editingAcessoId = null;
 let editingLoginId = null;
 
-/* ═══════════════════════════════════════
-   TROCA DE AMBIENTE
-   ═══════════════════════════════════════ */
-function switchEnv(env) {
-  if (env === currentEnv) return;
-  currentEnv = env;
-  SB = ENVS[env].url;
-  AK = ENVS[env].key;
-  HD = {'apikey': AK, 'Authorization': 'Bearer ' + AK, 'Content-Type': 'application/json', 'Prefer': 'return=representation'};
-  localStorage.setItem('current_env', env);
-  
-  const badge = document.getElementById('env-badge');
-  badge.textContent = env === 'prod' ? 'PRODUCTION' : 'HML';
-  badge.className = 'env-badge' + (env === 'prod' ? ' prod' : '');
-  
-  toast(`Alternado para ambiente ${env.toUpperCase()}`);
-  loadAll();
-}
-
-function initEnv() {
-  document.getElementById('env-selector').value = currentEnv;
-  const badge = document.getElementById('env-badge');
-  badge.textContent = currentEnv === 'prod' ? 'PRODUCTION' : 'HML';
-  badge.className = 'env-badge' + (currentEnv === 'prod' ? ' prod' : '');
-}
-
-/* ═══════════════════════════════════════
-   FUNÇÕES DE UI
-   ═══════════════════════════════════════ */
 function toast(m, t = 'ok') {
   const d = document.createElement('div');
   d.className = 'tt ' + t;
@@ -403,9 +292,6 @@ function go(el) {
   if (el.dataset.p === 'dashboard') renderAllCharts();
 }
 
-/* ═══════════════════════════════════════
-   FUNÇÕES DE BANCO DE DADOS
-   ═══════════════════════════════════════ */
 async function sf(ep, opt = {}) {
   try {
     const r = await fetch(SB + ep, {headers: HD, ...opt});
@@ -441,9 +327,6 @@ async function loadAll() {
   }
 }
 
-/* ═══════════════════════════════════════
-   FUNÇÕES HELPER
-   ═══════════════════════════════════════ */
 function tNome(id) {return (torres.find(t => t.id === Number(id)) || {}).nome || 'N/A';}
 function aNome(id) {return (analistas.find(a => a.id === Number(id)) || {}).nome || 'N/A';}
 function cNome(id) {return (clientes.find(c => c.id === Number(id)) || {}).nome || 'N/A';}
@@ -461,9 +344,6 @@ function criticidadeLogin(dias) {
   return {cls: 'ok', label: '🟢 OK', txt: 'OK'};
 }
 
-/* ═══════════════════════════════════════
-   RENDERIZAÇÃO GERAL
-   ═══════════════════════════════════════ */
 function renderAll() {
   populateAllSelects();
   renderDashboard();
@@ -498,9 +378,6 @@ function populateAllSelects() {
   });
 }
 
-/* ═══════════════════════════════════════
-   DASHBOARD
-   ═══════════════════════════════════════ */
 function renderDashboard() {
   const lib = acessos.filter(a => a.status === 'liberado').length;
   const pend = acessos.filter(a => a.status === 'pendente').length;
@@ -530,31 +407,28 @@ function renderAllCharts() {
     const anContratos = clientes.filter(cl => cl.torre_id === an.torre_id).length;
     return {nome: an.nome.split(' ')[0], liberados: anAcessos, contratos: anContratos};
   }).sort((a, b) => b.liberados - a.liberados).slice(0, 10);
-  charts.c1 = new Chart(document.getElementById('c1'), {type: 'bar', data: {labels: analistasData.map(d => d.nome), datasets: [{label: 'Liberados', data: analistasData.map(d => d.liberados), backgroundColor: '#2ecc71'}, {label: 'Contratos na Torre', data: analistasData.map(d => d.contratos), backgroundColor: 'rgba(0,0,0,0.1)'}]}});
+  charts.c1 = new Chart(document.getElementById('c1'), {type: 'bar', data: {labels: analistasData.map(d => d.nome), datasets: [{label: 'Liberados', data: analistasData.map(d => d.liberados), backgroundColor: '#2ecc71'}, {label: 'Contratos na Torre', data: analistasData.map(d => d.contratos), backgroundColor: 'rgba(0,0,0,0.1)'}]}, options: {maintainAspectRatio: true, responsive: true}});
 
   const pendPorTorre = torres.map(t => {
     const pends = acessos.filter(a => a.torre_id === t.id && a.status === 'pendente').length;
     return {torre: t.nome, pends};
   });
-  charts.c2 = new Chart(document.getElementById('c2'), {type: 'doughnut', data: {labels: pendPorTorre.map(d => d.torre), datasets: [{data: pendPorTorre.map(d => d.pends), backgroundColor: ['#BF0411', '#C00000', '#e74c3c', '#d35400', '#f39c12', '#f1c40f', '#7f8c8d', '#95a5a6', '#bdc3c7']}]}, options: {plugins: {legend: {position: 'right'}}}});
+  charts.c2 = new Chart(document.getElementById('c2'), {type: 'doughnut', data: {labels: pendPorTorre.map(d => d.torre), datasets: [{data: pendPorTorre.map(d => d.pends), backgroundColor: ['#ff6b35', '#ff8c5a', '#e74c3c', '#d35400', '#f39c12', '#f1c40f', '#7f8c8d', '#95a5a6', '#bdc3c7']}]}, options: {plugins: {legend: {position: 'right'}}, maintainAspectRatio: true, responsive: true}});
 
   const libPercPorTorre = torres.map(t => {
     const li = acessos.filter(a => a.torre_id === t.id && a.status === 'liberado').length;
     const pe = acessos.filter(a => a.torre_id === t.id && a.status === 'pendente').length;
     return li + pe > 0 ? (li / (li + pe)) * 100 : 0;
   });
-  charts.c3 = new Chart(document.getElementById('c3'), {type: 'bar', data: {labels: torres.map(t => t.nome), datasets: [{label: '% Liberados', data: libPercPorTorre, backgroundColor: '#27ae60'}]}, options: {indexAxis: 'y', scales: {x: {max: 100}}}});
+  charts.c3 = new Chart(document.getElementById('c3'), {type: 'bar', data: {labels: torres.map(t => t.nome), datasets: [{label: '% Liberados', data: libPercPorTorre, backgroundColor: '#27ae60'}]}, options: {indexAxis: 'y', scales: {x: {max: 100}}, maintainAspectRatio: true, responsive: true}});
 
   const pendPorCliente = clientes.map(c => {
     const pends = acessos.filter(a => a.cliente_id === c.id && a.status === 'pendente').length;
     return {cliente: c.nome, pends};
   }).filter(d => d.pends > 0).sort((a, b) => b.pends - a.pends).slice(0, 10);
-  charts.c4 = new Chart(document.getElementById('c4'), {type: 'bar', data: {labels: pendPorCliente.map(d => d.cliente), datasets: [{label: 'Pendências', data: pendPorCliente.map(d => d.pends), backgroundColor: '#e67e22'}]}, options: {indexAxis: 'y'}});
+  charts.c4 = new Chart(document.getElementById('c4'), {type: 'bar', data: {labels: pendPorCliente.map(d => d.cliente), datasets: [{label: 'Pendências', data: pendPorCliente.map(d => d.pends), backgroundColor: '#e67e22'}]}, options: {indexAxis: 'y', maintainAspectRatio: true, responsive: true}});
 }
 
-/* ═══════════════════════════════════════
-   ANALISTAS
-   ═══════════════════════════════════════ */
 function renderAnalistas() {
   const fTorre = document.getElementById('f-at').value;
   const fNome = document.getElementById('f-an').value.toLowerCase();
@@ -589,225 +463,14 @@ async function addAnalista() {
 }
 
 function editAnalista(analista) {
-  cancelEditAnalista();
-  editingAnalistaId = analista.id;
-  document.getElementById('i-an').value = analista.nome;
-  document.getElementById('i-at').value = analista.torre_id;
-  document.getElementById('form-analista').classList.add('editing');
-  document.getElementById('form-analista-title').textContent = '✏️ Editando Analista';
-  document.getElementById('btn-add-analista').innerHTML = 'Salvar <button class="bc" onclick="event.stopPropagation();cancelEditAnalista()">Cancelar</button>';
-  renderAnalistas();
-}
-
-function cancelEditAnalista() {
-  editingAnalistaId = null;
-  document.getElementById('i-an').value = '';
-  document.getElementById('i-at').value = '';
-  document.getElementById('form-analista').classList.remove('editing');
-  document.getElementById('form-analista-title').textContent = '➕ Cadastrar Analista';
-  document.getElementById('btn-add-analista').innerHTML = 'Cadastrar';
-  renderAnalistas();
-}
-
-async function deleteAnalista(id, nome) {
-  modalShow('⚠️ Confirmar exclusão', `Excluir analista "${nome}"?`, async () => {
-    try {
-      await sf('/analistas?id=eq.' + id, {method: 'DELETE'});
-      toast('Analista excluído!');
-      await loadAll();
-    } catch (e) {toast('Erro: ' + e.message, 'er');}
-  });
-}
-
-/* ═══════════════════════════════════════
-   ACESSOS
-   ═══════════════════════════════════════ */
-function renderAcessos() {
-  const fTorre = document.getElementById('f-xt').value;
-  const fStatus = document.getElementById('f-xs').value;
-  const fDi = document.getElementById('f-di').value;
-  const fDf = document.getElementById('f-df').value;
-  
-  const data = acessos
-    .filter(a => {
-      if (fTorre && a.torre_id != fTorre) return false;
-      if (fStatus && a.status !== fStatus) return false;
-      if (fDi && new Date(a.updated_at) < new Date(fDi)) return false;
-      if (fDf && new Date(a.updated_at) > new Date(fDf + 'T23:59:59')) return false;
-      return true;
-    })
-    .map(a => {
-      const badgeCls = a.status === 'liberado' ? 'bg' : a.status === 'pendente' ? 'br' : 'bo';
-      return `<tr id="ac-row-${a.id}" ${editingAcessoId === a.id ? 'class="editing-row"' : ''}>
-        <td>${a.id}</td><td>${tNome(a.torre_id)}</td><td>${aNome(a.analista_id)}</td><td>${cNome(a.cliente_id)}</td>
-        <td><span class="bd ${badgeCls}">${a.status}</span></td>
-        <td>${a.observacao || '-'}</td><td>${formatDate(a.updated_at)}</td>
-        <td>
-          <button class="bs bdo" onclick='editAcesso(${JSON.stringify(a)})'>Editar</button>
-          <button class="bs bdr" onclick="deleteAcesso(${a.id})">Excluir</button>
-        </td>
-      </tr>`;
-    }).join('');
-  document.getElementById('xtb').innerHTML = data;
-}
-
-async function addAcesso() {
-  const torre_id = document.getElementById('i-xt').value;
-  const analista_id = document.getElementById('i-xa').value;
-  const cliente_id = document.getElementById('i-xc').value;
-  const status = document.getElementById('i-xs').value;
-  const observacao = document.getElementById('i-xo').value.trim();
-  if (!torre_id || !analista_id || !cliente_id) {toast('Preencha torre, analista e cliente', 'er'); return;}
-  try {
-    if (editingAcessoId) {
-      await sf('/acessos?id=eq.' + editingAcessoId, {method: 'PATCH', body: JSON.stringify({torre_id, analista_id, cliente_id, status, observacao})});
-      toast('Acesso atualizado!');
-    } else {
-      await sf('/acessos', {method: 'POST', body: JSON.stringify({torre_id, analista_id, cliente_id, status, observacao})});
-      toast('Acesso cadastrado!');
-    }
-    cancelEditAcesso();
-    await loadAll();
-  } catch (e) {toast('Erro: ' + e.message, 'er');}
-}
-
-function editAcesso(acesso) {
-  cancelEditAcesso();
-  editingAcessoId = acesso.id;
-  document.getElementById('i-xt').value = acesso.torre_id;
-  document.getElementById('i-xt').dispatchEvent(new Event('change'));
-  setTimeout(() => {
-    document.getElementById('i-xa').value = acesso.analista_id;
-    document.getElementById('i-xc').value = acesso.cliente_id;
-  }, 100);
-  document.getElementById('i-xs').value = acesso.status;
-  document.getElementById('i-xo').value = acesso.observacao || '';
-  document.getElementById('form-acesso').classList.add('editing');
-  document.getElementById('form-acesso-title').textContent = '✏️ Editando Acesso';
-  document.getElementById('btn-add-acesso').innerHTML = 'Salvar <button class="bc" onclick="event.stopPropagation();cancelEditAcesso()">Cancelar</button>';
-  renderAcessos();
-}
-
-function cancelEditAcesso() {
-  editingAcessoId = null;
-  document.getElementById('i-xt').value = '';
-  document.getElementById('i-xa').value = '';
-  document.getElementById('i-xc').value = '';
-  document.getElementById('i-xs').value = 'pendente';
-  document.getElementById('i-xo').value = '';
-  document.getElementById('form-acesso').classList.remove('editing');
-  document.getElementById('form-acesso-title').textContent = '➕ Cadastrar Acesso';
-  document.getElementById('btn-add-acesso').innerHTML = 'Cadastrar';
-  renderAcessos();
-}
-
-async function deleteAcesso(id) {
-  modalShow('⚠️ Confirmar exclusão', `Excluir acesso #${id}?`, async () => {
-    try {
-      await sf('/acessos?id=eq.' + id, {method: 'DELETE'});
-      toast('Acesso excluído!');
-      await loadAll();
-    } catch (e) {toast('Erro: ' + e.message, 'er');}
-  });
-}
-
-  ═══ */
-function renderDashboard() {
-  const lib = acessos.filter(a => a.status === 'liberado').length;
-  const pend = acessos.filter(a => a.status === 'pendente').length;
-  document.getElementById('k1').textContent = torres.length;
-  document.getElementById('k2').textContent = analistas.length;
-  document.getElementById('k3').textContent = clientes.length;
-  document.getElementById('k4').textContent = lib;
-  document.getElementById('k5').textContent = pend;
-
-  const data = torres.map(t => {
-    const an = analistas.filter(a => a.torre_id === t.id).length;
-    const cl = clientes.filter(c => c.torre_id === t.id).length;
-    const li = acessos.filter(a => a.torre_id === t.id && a.status === 'liberado').length;
-    const pe = acessos.filter(a => a.torre_id === t.id && a.status === 'pendente').length;
-    const total = li + pe;
-    const perc = total > 0 ? ((li / total) * 100).toFixed(1) + '%' : '0%';
-    return `<tr><td>${t.nome}</td><td>${cl}</td><td>${an}</td><td>${li}</td><td>${pe}</td><td>${perc}</td></tr>`;
-  }).join('');
-  document.getElementById('dtb').innerHTML = data;
-}
-
-function renderAllCharts() {
-  Object.values(charts).forEach(c => c && c.destroy());
-  
-  const analistasData = analistas.map(an => {
-    const anAcessos = acessos.filter(ac => ac.analista_id === an.id && ac.status === 'liberado').length;
-    const anContratos = clientes.filter(cl => cl.torre_id === an.torre_id).length;
-    return {nome: an.nome.split(' ')[0], liberados: anAcessos, contratos: anContratos};
-  }).sort((a, b) => b.liberados - a.liberados).slice(0, 10);
-  charts.c1 = new Chart(document.getElementById('c1'), {type: 'bar', data: {labels: analistasData.map(d => d.nome), datasets: [{label: 'Liberados', data: analistasData.map(d => d.liberados), backgroundColor: '#2ecc71'}, {label: 'Contratos na Torre', data: analistasData.map(d => d.contratos), backgroundColor: 'rgba(0,0,0,0.1)'}]}});
-
-  const pendPorTorre = torres.map(t => {
-    const pends = acessos.filter(a => a.torre_id === t.id && a.status === 'pendente').length;
-    return {torre: t.nome, pends};
-  });
-  charts.c2 = new Chart(document.getElementById('c2'), {type: 'doughnut', data: {labels: pendPorTorre.map(d => d.torre), datasets: [{data: pendPorTorre.map(d => d.pends), backgroundColor: ['#BF0411', '#C00000', '#e74c3c', '#d35400', '#f39c12', '#f1c40f', '#7f8c8d', '#95a5a6', '#bdc3c7']}]}, options: {plugins: {legend: {position: 'right'}}}});
-
-  const libPercPorTorre = torres.map(t => {
-    const li = acessos.filter(a => a.torre_id === t.id && a.status === 'liberado').length;
-    const pe = acessos.filter(a => a.torre_id === t.id && a.status === 'pendente').length;
-    return li + pe > 0 ? (li / (li + pe)) * 100 : 0;
-  });
-  charts.c3 = new Chart(document.getElementById('c3'), {type: 'bar', data: {labels: torres.map(t => t.nome), datasets: [{label: '% Liberados', data: libPercPorTorre, backgroundColor: '#27ae60'}]}, options: {indexAxis: 'y', scales: {x: {max: 100}}}});
-
-  const pendPorCliente = clientes.map(c => {
-    const pends = acessos.filter(a => a.cliente_id === c.id && a.status === 'pendente').length;
-    return {cliente: c.nome, pends};
-  }).filter(d => d.pends > 0).sort((a, b) => b.pends - a.pends).slice(0, 10);
-  charts.c4 = new Chart(document.getElementById('c4'), {type: 'bar', data: {labels: pendPorCliente.map(d => d.cliente), datasets: [{label: 'Pendências', data: pendPorCliente.map(d => d.pends), backgroundColor: '#e67e22'}]}, options: {indexAxis: 'y'}});
-}
-
-/* ═══════════════════════════════════════
-   ANALISTAS
-   ═══════════════════════════════════════ */
-function renderAnalistas() {
-  const fTorre = document.getElementById('f-at').value;
-  const fNome = document.getElementById('f-an').value.toLowerCase();
-  const data = analistas
-    .filter(a => (!fTorre || a.torre_id == fTorre) && (!fNome || a.nome.toLowerCase().includes(fNome)))
-    .map(a => `<tr id="an-row-${a.id}">
-      <td>${a.id}</td><td>${a.nome}</td><td>${tNome(a.torre_id)}</td>
-      <td>${clientes.filter(c => c.torre_id === a.torre_id).length}</td>
-      <td>
-        <button class="bs bdo" onclick='editAnalista(${JSON.stringify(a)})'>Editar</button>
-        <button class="bs bdr" onclick="deleteAnalista(${a.id},'${a.nome.replace(/'/g, "\\'")}')">Excluir</button>
-      </td>
-     </tr>`).join('');
-  document.getElementById('atb').innerHTML = data;
-}
-
-async function addAnalista() {
-  const nome = document.getElementById('i-an').value.trim();
-  const torre_id = document.getElementById('i-at').value;
-  if (!nome || !torre_id) {toast('Preencha nome e torre', 'er'); return;}
-  try {
-    if (editingAnalistaId) {
-      await sf('/analistas?id=eq.' + editingAnalistaId, {method: 'PATCH', body: JSON.stringify({nome, torre_id})});
-      toast('Analista atualizado!');
-    } else {
-      await sf('/analistas', {method: 'POST', body: JSON.stringify({nome, torre_id})});
-      toast('Analista cadastrado!');
-    }
-    cancelEditAnalista();
-    await loadAll();
-  } catch (e) {toast('Erro: ' + e.message, 'er');}
-}
-
-function editAnalista(analista) {
-  cancelEditAnalista();
   editingAnalistaId = analista.id;
   document.getElementById('i-an').value = analista.nome;
   document.getElementById('i-at').value = analista.torre_id;
   document.getElementById('form-analista').classList.add('editing');
   document.getElementById('form-analista-title').textContent = '✏️ Editando Analista';
   document.getElementById('btn-add-analista').textContent = 'Salvar';
-  document.getElementById('an-row-' + analista.id).classList.add('editing-row');
+  document.getElementById('btn-cancel-analista').style.display = 'inline-flex';
+  renderAnalistas();
 }
 
 function cancelEditAnalista() {
@@ -817,7 +480,8 @@ function cancelEditAnalista() {
   document.getElementById('form-analista').classList.remove('editing');
   document.getElementById('form-analista-title').textContent = '➕ Cadastrar Analista';
   document.getElementById('btn-add-analista').textContent = 'Cadastrar';
-  document.querySelectorAll('.editing-row').forEach(r => r.classList.remove('editing-row'));
+  document.getElementById('btn-cancel-analista').style.display = 'none';
+  renderAnalistas();
 }
 
 function deleteAnalista(id, nome) {
@@ -830,15 +494,12 @@ function deleteAnalista(id, nome) {
   });
 }
 
-/* ═══════════════════════════════════════
-   CLIENTES
-   ═══════════════════════════════════════ */
 function renderClientes() {
   const fTorre = document.getElementById('f-ct').value;
   const fNome = document.getElementById('f-cn').value.toLowerCase();
   const data = clientes
     .filter(c => (!fTorre || c.torre_id == fTorre) && (!fNome || c.nome.toLowerCase().includes(fNome)))
-    .map(c => `<tr id="cl-row-${c.id}">
+    .map(c => `<tr id="cl-row-${c.id}" ${editingClienteId === c.id ? 'class="editing-row"' : ''}>
       <td>${c.id}</td><td>${c.nome}</td><td>${tNome(c.torre_id)}</td>
       <td>
         <button class="bs bdo" onclick='editCliente(${JSON.stringify(c)})'>Editar</button>
@@ -866,14 +527,14 @@ async function addCliente() {
 }
 
 function editCliente(cliente) {
-  cancelEditCliente();
   editingClienteId = cliente.id;
   document.getElementById('i-cn').value = cliente.nome;
   document.getElementById('i-ct').value = cliente.torre_id;
   document.getElementById('form-cliente').classList.add('editing');
   document.getElementById('form-cliente-title').textContent = '✏️ Editando Cliente';
   document.getElementById('btn-add-cliente').textContent = 'Salvar';
-  document.getElementById('cl-row-' + cliente.id).classList.add('editing-row');
+  document.getElementById('btn-cancel-cliente').style.display = 'inline-flex';
+  renderClientes();
 }
 
 function cancelEditCliente() {
@@ -883,7 +544,8 @@ function cancelEditCliente() {
   document.getElementById('form-cliente').classList.remove('editing');
   document.getElementById('form-cliente-title').textContent = '➕ Cadastrar Cliente';
   document.getElementById('btn-add-cliente').textContent = 'Cadastrar';
-  document.querySelectorAll('.editing-row').forEach(r => r.classList.remove('editing-row'));
+  document.getElementById('btn-cancel-cliente').style.display = 'none';
+  renderClientes();
 }
 
 function deleteCliente(id, nome) {
@@ -896,9 +558,6 @@ function deleteCliente(id, nome) {
   });
 }
 
-/* ═══════════════════════════════════════
-   ACESSOS
-   ═══════════════════════════════════════ */
 function renderAcessos() {
   const fTorre = document.getElementById('f-xt').value;
   const fStatus = document.getElementById('f-xs').value;
@@ -914,7 +573,7 @@ function renderAcessos() {
     })
     .map(a => {
       const bdCls = a.status === 'liberado' ? 'bg' : (a.status === 'pendente' ? 'br' : 'bo');
-      return `<tr id="ac-row-${a.id}">
+      return `<tr id="ac-row-${a.id}" ${editingAcessoId === a.id ? 'class="editing-row"' : ''}>
         <td>${a.id}</td><td>${tNome(a.torre_id)}</td><td>${aNome(a.analista_id)}</td><td>${cNome(a.cliente_id)}</td>
         <td><span class="bd ${bdCls}">${a.status}</span></td>
         <td>${a.observacao || '-'}</td><td>${formatDate(a.updated_at)}</td>
@@ -948,7 +607,6 @@ async function addAcesso() {
 }
 
 function editAcesso(acesso) {
-  cancelEditAcesso();
   editingAcessoId = acesso.id;
   document.getElementById('i-xt').value = acesso.torre_id;
   document.getElementById('i-xt').dispatchEvent(new Event('change'));
@@ -961,24 +619,26 @@ function editAcesso(acesso) {
   document.getElementById('form-acesso').classList.add('editing');
   document.getElementById('form-acesso-title').textContent = '✏️ Editando Acesso';
   document.getElementById('btn-add-acesso').textContent = 'Salvar';
-  document.getElementById('ac-row-' + acesso.id).classList.add('editing-row');
+  document.getElementById('btn-cancel-acesso').style.display = 'inline-flex';
+  renderAcessos();
 }
 
 function cancelEditAcesso() {
   editingAcessoId = null;
   document.getElementById('i-xt').value = '';
-  document.getElementById('i-xa').value = '';
-  document.getElementById('i-xc').value = '';
+  document.getElementById('i-xa').innerHTML = '<option value="">Selecione...</option>';
+  document.getElementById('i-xc').innerHTML = '<option value="">Selecione...</option>';
   document.getElementById('i-xs').value = 'pendente';
   document.getElementById('i-xo').value = '';
   document.getElementById('form-acesso').classList.remove('editing');
   document.getElementById('form-acesso-title').textContent = '➕ Cadastrar Acesso';
   document.getElementById('btn-add-acesso').textContent = 'Cadastrar';
-  document.querySelectorAll('.editing-row').forEach(r => r.classList.remove('editing-row'));
+  document.getElementById('btn-cancel-acesso').style.display = 'none';
+  renderAcessos();
 }
 
 function deleteAcesso(id) {
-  modalShow('⚠️ Confirmar exclusão', 'Excluir este acesso?', async () => {
+  modalShow('⚠️ Confirmar exclusão', `Excluir acesso #${id}?`, async () => {
     try {
       await sf('/acessos?id=eq.' + id, {method: 'DELETE'});
       toast('Acesso excluído!');
@@ -987,41 +647,38 @@ function deleteAcesso(id) {
   });
 }
 
-/* ═══════════════════════════════════════
-   ÚLTIMO LOGIN
-   ═══════════════════════════════════════ */
 function renderLogins() {
   const fTorre = document.getElementById('l-f-torre').value;
   const fCrit = document.getElementById('l-f-crit').value;
-  const filtered = logins.filter(l => {
-    if (fTorre && l.torre_id != fTorre) return false;
-    const dias = diasSemLogin(l.ultimo_login);
-    const crit = criticidadeLogin(dias);
-    if (fCrit && crit.cls !== fCrit) return false;
-    return true;
-  });
-  
-  const crit = filtered.filter(l => diasSemLogin(l.ultimo_login) > 10).length;
-  const warn = filtered.filter(l => {const d = diasSemLogin(l.ultimo_login); return d >= 5 && d <= 10;}).length;
-  const ok = filtered.filter(l => diasSemLogin(l.ultimo_login) < 5).length;
-  document.getElementById('l-k1').textContent = crit;
-  document.getElementById('l-k2').textContent = warn;
-  document.getElementById('l-k3').textContent = ok;
-
-  const data = filtered.map(l => {
-    const dias = diasSemLogin(l.ultimo_login);
-    const cr = criticidadeLogin(dias);
-    return `<tr id="lg-row-${l.id}">
-      <td>${l.id}</td><td>${tNome(l.torre_id)}</td><td>${aNome(l.analista_id)}</td><td>${cNome(l.cliente_id)}</td>
-      <td>${formatDate(l.ultimo_login)}</td><td>${dias}d</td>
-      <td><span class="badge ${cr.cls}">${cr.label}</span></td>
-      <td>
-        <button class="bs bdo" onclick='editLogin(${JSON.stringify(l)})'>Editar</button>
-        <button class="bs bdr" onclick="deleteLogin(${l.id})">Excluir</button>
-      </td>
-     </tr>`;
-  }).join('');
+  const data = logins
+    .filter(l => {
+      const dias = diasSemLogin(l.ultimo_login);
+      const crit = criticidadeLogin(dias);
+      if (fTorre && l.torre_id != fTorre) return false;
+      if (fCrit && crit.cls !== fCrit) return false;
+      return true;
+    })
+    .map(l => {
+      const dias = diasSemLogin(l.ultimo_login);
+      const crit = criticidadeLogin(dias);
+      return `<tr id="lg-row-${l.id}" ${editingLoginId === l.id ? 'class="editing-row"' : ''}>
+        <td>${l.id}</td><td>${tNome(l.torre_id)}</td><td>${aNome(l.analista_id)}</td><td>${cNome(l.cliente_id)}</td>
+        <td>${formatDate(l.ultimo_login)}</td><td>${dias}</td>
+        <td><span class="badge ${crit.cls}">${crit.label}</span></td>
+        <td>
+          <button class="bs bdo" onclick='editLogin(${JSON.stringify(l)})'>Editar</button>
+          <button class="bs bdr" onclick="deleteLogin(${l.id})">Excluir</button>
+        </td>
+       </tr>`;
+    }).join('');
   document.getElementById('l-tb').innerHTML = data;
+
+  const crits = logins.filter(l => diasSemLogin(l.ultimo_login) > 10).length;
+  const warns = logins.filter(l => {const d = diasSemLogin(l.ultimo_login); return d >= 5 && d <= 10;}).length;
+  const oks = logins.filter(l => diasSemLogin(l.ultimo_login) < 5).length;
+  document.getElementById('l-k1').textContent = crits;
+  document.getElementById('l-k2').textContent = warns;
+  document.getElementById('l-k3').textContent = oks;
 }
 
 async function addLogin() {
@@ -1044,7 +701,6 @@ async function addLogin() {
 }
 
 function editLogin(login) {
-  cancelEditLogin();
   editingLoginId = login.id;
   document.getElementById('l-i-torre').value = login.torre_id;
   document.getElementById('l-i-torre').dispatchEvent(new Event('change'));
@@ -1052,27 +708,31 @@ function editLogin(login) {
     document.getElementById('l-i-analista').value = login.analista_id;
     document.getElementById('l-i-cliente').value = login.cliente_id;
   }, 100);
-  document.getElementById('l-i-data').value = login.ultimo_login.slice(0, 16);
+  const dt = new Date(login.ultimo_login);
+  const dtStr = dt.toISOString().slice(0, 16);
+  document.getElementById('l-i-data').value = dtStr;
   document.getElementById('form-login').classList.add('editing');
   document.getElementById('form-login-title').textContent = '✏️ Editando Login';
   document.getElementById('btn-add-login').textContent = 'Salvar';
-  document.getElementById('lg-row-' + login.id).classList.add('editing-row');
+  document.getElementById('btn-cancel-login').style.display = 'inline-flex';
+  renderLogins();
 }
 
 function cancelEditLogin() {
   editingLoginId = null;
   document.getElementById('l-i-torre').value = '';
-  document.getElementById('l-i-analista').value = '';
-  document.getElementById('l-i-cliente').value = '';
+  document.getElementById('l-i-analista').innerHTML = '<option value="">Selecione...</option>';
+  document.getElementById('l-i-cliente').innerHTML = '<option value="">Selecione...</option>';
   document.getElementById('l-i-data').value = '';
   document.getElementById('form-login').classList.remove('editing');
   document.getElementById('form-login-title').textContent = '➕ Registrar Último Login';
   document.getElementById('btn-add-login').textContent = 'Registrar';
-  document.querySelectorAll('.editing-row').forEach(r => r.classList.remove('editing-row'));
+  document.getElementById('btn-cancel-login').style.display = 'none';
+  renderLogins();
 }
 
 function deleteLogin(id) {
-  modalShow('⚠️ Confirmar exclusão', 'Excluir este registro de login?', async () => {
+  modalShow('⚠️ Confirmar exclusão', `Excluir login #${id}?`, async () => {
     try {
       await sf('/ultimo_login?id=eq.' + id, {method: 'DELETE'});
       toast('Login excluído!');
@@ -1081,21 +741,11 @@ function deleteLogin(id) {
   });
 }
 
-/* ═══════════════════════════════════════
-   EXPORTAÇÃO (SIMPLIFICADA)
-   ═══════════════════════════════════════ */
-function exportDash(fmt) {toast('Exportação de Dashboard em ' + fmt.toUpperCase() + ' não implementada ainda', 'er');}
-function exportAcessos(fmt) {toast('Exportação de Acessos em ' + fmt.toUpperCase() + ' não implementada ainda', 'er');}
-function exportLogins(fmt) {toast('Exportação de Logins em ' + fmt.toUpperCase() + ' não implementada ainda', 'er');}
+function exportDash(fmt) {toast('Exportação de dashboard em desenvolvimento', 'er');}
+function exportAcessos(fmt) {toast('Exportação de acessos em desenvolvimento', 'er');}
+function exportLogins(fmt) {toast('Exportação de logins em desenvolvimento', 'er');}
 
-/* ═══════════════════════════════════════
-   INICIALIZAÇÃO
-   ═══════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
-  initEnv();
-  loadAll();
-});
+window.addEventListener('DOMContentLoaded', loadAll);
 </script>
 </body>
 </html>
-
