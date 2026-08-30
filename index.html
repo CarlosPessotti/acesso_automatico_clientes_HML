@@ -206,7 +206,7 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <div class="fg"><label>Filtrar por Torre</label><select id="f-at" onchange="renderAnalistas()"></select></div>
     <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-an" oninput="renderAnalistas()"></div>
   </div>
-  <div class="tw"><h3>Lista de Analistas</h3><table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Contratos</th><th>Ações</th></tr></thead><tbody id="atb"></tbody></table></div>
+ 
   <div class="tw"><h3>Lista de Analistas</h3>
 <table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Contratos</th><th>Ações</th></tr></thead><tbody id="atb"></tbody></table>
 <div class="pag" id="pag-analistas"></div>
@@ -261,7 +261,7 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <div class="fg"><label>Filtrar por Torre</label><select id="f-ct" onchange="renderClientes()"></select></div>
     <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-cn" oninput="renderClientes()"></div>
   </div>
-  <div class="tw"><h3>Lista de Clientes</h3><table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Ações</th></tr></thead><tbody id="ctb"></tbody></table></div>
+
 <div class="tw"><h3>Lista de Clientes</h3>
 <table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Ações</th></tr></thead><tbody id="ctb"></tbody></table>
 <div class="pag" id="pag-clientes"></div>
@@ -296,7 +296,7 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <button onclick="exportLogins('txt')">📝 TXT</button>
     <button onclick="exportLogins('pdf')">📕 PDF</button>
   </div>
-  <div class="tw"><h3>Registros de Último Login</h3><table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Último Login</th><th>Dias</th><th>Status</th><th>Ações</th></tr></thead><tbody id="l-tb"></tbody></table></div>
+  
 <div class="tw"><h3>Registros de Último Login</h3>
 <table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Último Login</th><th>Dias</th><th>Status</th><th>Ações</th></tr></thead><tbody id="l-tb"></tbody></table>
 <div class="pag" id="pag-logins"></div>
@@ -553,7 +553,7 @@ function renderAllCharts() {
   charts.c4 = new Chart(document.getElementById('c4'), {type: 'bar', data: {labels: pendPorCliente.map(d => d.cliente), datasets: [{label: 'Pendências', data: pendPorCliente.map(d => d.pends), backgroundColor: '#e67e22'}]}, options: {indexAxis: 'y', maintainAspectRatio: true, responsive: true}});
 }
 
-ffunction renderAnalistas() {
+function renderAnalistas() {
   var ft = document.getElementById('f-at').value;
   var fn = document.getElementById('f-an').value.toLowerCase();
   var filtered = analistas.filter(function(a) {
@@ -574,13 +574,14 @@ ffunction renderAnalistas() {
         var contratos = clientes.filter(function(c) { return c.torre_id === a.torre_id }).length;
         return '<tr' + (editingAnalistaId === a.id ? ' class="editing-row"' : '') + '>' +
           '<td>' + a.id + '</td><td>' + a.nome + '</td><td>' + torre + '</td><td>' + contratos + '</td>' +
-          '<td><button class="bs bdo" onclick="editAnalista(' + a.id + ')">✏️</button> <button class="bs bdr" onclick="delAnalista(' + a.id + ')">🗑️</button></td></tr>';
+        '<td><button class="bs bdo" onclick="editAnalista(' + a.id + ')">✏️</button> <button class="bs bdr" onclick="delAnalista(' + a.id + ',\'' + a.nome.replace(/'/g,"\\'") + '\')">🗑️</button></td></tr>';
       }).join('');
 
   renderPag('pag-analistas', filtered.length, pgAnalistas, 'goPageAnalistas');
 }
 
 function goPageAnalistas(p) { pgAnalistas = p; renderAnalistas(); }
+  
 async function addAnalista() {
   const nome = document.getElementById('i-an').value.trim();
   const torre_id = document.getElementById('i-at').value;
@@ -598,7 +599,9 @@ async function addAnalista() {
   } catch (e) {toast('Erro: ' + e.message, 'er');}
 }
 
-function editAnalista(analista) {
+function editAnalista(id) {
+  var analista = analistas.find(function(a){return a.id===id});
+  if(!analista) return;
   editingAnalistaId = analista.id;
   document.getElementById('i-an').value = analista.nome;
   document.getElementById('i-at').value = analista.torre_id;
@@ -620,8 +623,8 @@ function cancelEditAnalista() {
   renderAnalistas();
 }
 
-function deleteAnalista(id, nome) {
-  modalShow('⚠️ Confirmar exclusão', `Excluir analista "${nome}"?`, async () => {
+function delAnalista(id, nome) {
+  modalShow('⚠️ Confirmar exclusão', 'Excluir analista "' + nome + '"?', async function() {
     try {
       await sf('/analistas?id=eq.' + id, {method: 'DELETE'});
       toast('Analista excluído!');
@@ -759,14 +762,14 @@ async function addAcesso() {
   } catch (e) {toast('Erro: ' + e.message, 'er');}
 }
 
-function editAcesso(acesso) {
+function editAcesso(id) {
+  var acesso = acessos.find(function(a){return a.id===id});
+  if(!acesso) return;
   editingAcessoId = acesso.id;
   document.getElementById('i-xt').value = acesso.torre_id;
-  document.getElementById('i-xt').dispatchEvent(new Event('change'));
-  setTimeout(() => {
-    document.getElementById('i-xa').value = acesso.analista_id;
-    document.getElementById('i-xc').value = acesso.cliente_id;
-  }, 100);
+  filterAcessoSel();
+  document.getElementById('i-xa').value = acesso.analista_id;
+  document.getElementById('i-xc').value = acesso.cliente_id;
   document.getElementById('i-xs').value = acesso.status;
   document.getElementById('i-xo').value = acesso.observacao || '';
   document.getElementById('form-acesso').classList.add('editing');
@@ -790,8 +793,10 @@ function cancelEditAcesso() {
   renderAcessos();
 }
 
-function deleteAcesso(id) {
-  modalShow('⚠️ Confirmar exclusão', `Excluir acesso #${id}?`, async () => {
+function delAcesso(id) {
+  var acesso = acessos.find(function(a){return a.id===id});
+  var label = acesso ? (aNome(acesso.analista_id) + ' → ' + cNome(acesso.cliente_id)) : 'ID ' + id;
+  modalShow('⚠️ Confirmar exclusão', 'Excluir acesso "' + label + '"?', async function() {
     try {
       await sf('/acessos?id=eq.' + id, {method: 'DELETE'});
       toast('Acesso excluído!');
@@ -859,17 +864,16 @@ async function addLogin() {
   } catch (e) {toast('Erro: ' + e.message, 'er');}
 }
 
-function editLogin(login) {
+function editLogin(id) {
+  var login = logins.find(function(l){return l.id===id});
+  if(!login) return;
   editingLoginId = login.id;
   document.getElementById('l-i-torre').value = login.torre_id;
-  document.getElementById('l-i-torre').dispatchEvent(new Event('change'));
-  setTimeout(() => {
-    document.getElementById('l-i-analista').value = login.analista_id;
-    document.getElementById('l-i-cliente').value = login.cliente_id;
-  }, 100);
-  const dt = new Date(login.ultimo_login);
-  const dtStr = dt.toISOString().slice(0, 16);
-  document.getElementById('l-i-data').value = dtStr;
+  filterLoginSel();
+  document.getElementById('l-i-analista').value = login.analista_id;
+  document.getElementById('l-i-cliente').value = login.cliente_id;
+  var dt = login.ultimo_login ? login.ultimo_login.slice(0,16) : '';
+  document.getElementById('l-i-data').value = dt;
   document.getElementById('form-login').classList.add('editing');
   document.getElementById('form-login-title').textContent = '✏️ Editando Login';
   document.getElementById('btn-add-login').textContent = 'Salvar';
@@ -890,11 +894,13 @@ function cancelEditLogin() {
   renderLogins();
 }
 
-function deleteLogin(id) {
-  modalShow('⚠️ Confirmar exclusão', `Excluir login #${id}?`, async () => {
+function delLogin(id) {
+  var login = logins.find(function(l){return l.id===id});
+  var label = login ? (aNome(login.analista_id) + ' → ' + cNome(login.cliente_id)) : 'ID ' + id;
+  modalShow('⚠️ Confirmar exclusão', 'Excluir registro "' + label + '"?', async function() {
     try {
       await sf('/ultimo_login?id=eq.' + id, {method: 'DELETE'});
-      toast('Login excluído!');
+      toast('Registro excluído!');
       await loadAll();
     } catch (e) {toast('Erro: ' + e.message, 'er');}
   });
