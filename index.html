@@ -650,35 +650,44 @@ function deleteAcesso(id) {
 function renderLogins() {
   const fTorre = document.getElementById('l-f-torre').value;
   const fCrit = document.getElementById('l-f-crit').value;
-  const data = logins
-    .filter(l => {
-      const dias = diasSemLogin(l.ultimo_login);
-      const crit = criticidadeLogin(dias);
-      if (fTorre && l.torre_id != fTorre) return false;
-      if (fCrit && crit.cls !== fCrit) return false;
-      return true;
-    })
+  
+  // Ordena por criticidade: Crítico (999), Atenção (500), OK (0)
+  const sorted = logins
+    .filter(l => (!fTorre || l.torre_id == fTorre))
     .map(l => {
       const dias = diasSemLogin(l.ultimo_login);
       const crit = criticidadeLogin(dias);
-      return `<tr id="lg-row-${l.id}" ${editingLoginId === l.id ? 'class="editing-row"' : ''}>
-        <td>${l.id}</td><td>${tNome(l.torre_id)}</td><td>${aNome(l.analista_id)}</td><td>${cNome(l.cliente_id)}</td>
-        <td>${formatDate(l.ultimo_login)}</td><td>${dias}</td>
-        <td><span class="badge ${crit.cls}">${crit.label}</span></td>
-        <td>
-          <button class="bs bdo" onclick='editLogin(${JSON.stringify(l)})'>Editar</button>
-          <button class="bs bdr" onclick="deleteLogin(${l.id})">Excluir</button>
-        </td>
-       </tr>`;
-    }).join('');
-  document.getElementById('l-tb').innerHTML = data;
+      return {...l, dias, crit};
+    })
+    .sort((a, b) => {
+      // Ordena: crítico > atenção > ok
+      const peso = {crit: 999, warn: 500, ok: 0};
+      return peso[b.crit.cls] - peso[a.crit.cls];
+    })
+    .filter(l => (!fCrit || l.crit.cls === fCrit));
 
-  const crits = logins.filter(l => diasSemLogin(l.ultimo_login) > 10).length;
-  const warns = logins.filter(l => {const d = diasSemLogin(l.ultimo_login); return d >= 5 && d <= 10;}).length;
-  const oks = logins.filter(l => diasSemLogin(l.ultimo_login) < 5).length;
-  document.getElementById('l-k1').textContent = crits;
-  document.getElementById('l-k2').textContent = warns;
-  document.getElementById('l-k3').textContent = oks;
+  // Atualiza os cards de resumo
+  const criticos = sorted.filter(l => l.crit.cls === 'crit').length;
+  const atencao = sorted.filter(l => l.crit.cls === 'warn').length;
+  const ok = sorted.filter(l => l.crit.cls === 'ok').length;
+  document.getElementById('l-k1').textContent = criticos;
+  document.getElementById('l-k2').textContent = atencao;
+  document.getElementById('l-k3').textContent = ok;
+
+  const data = sorted.map(l => `<tr id="lg-row-${l.id}">
+    <td>${l.id}</td>
+    <td>${tNome(l.torre_id)}</td>
+    <td>${aNome(l.analista_id)}</td>
+    <td>${cNome(l.cliente_id)}</td>
+    <td>${formatDate(l.ultimo_login)}</td>
+    <td>${l.dias}</td>
+    <td><span class="badge ${l.crit.cls}">${l.crit.label}</span></td>
+    <td>
+      <button class="bs bdo" onclick='editLogin(${JSON.stringify(l)})'>Editar</button>
+      <button class="bs bdr" onclick="deleteLogin(${l.id})">Excluir</button>
+    </td>
+   </tr>`).join('');
+  document.getElementById('l-tb').innerHTML = data;
 }
 
 async function addLogin() {
