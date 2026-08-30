@@ -795,15 +795,15 @@ function renderCharts() {
     }, {});
   var topClientes = Object.entries(clientesPendentes).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
-  charts.c4 = new Chart(document.getElementById('c4'), {
-    type: 'bar',
-    data: {
-      labels: topClientes.map(d => d[0]),
-      datasets: [{ label: 'Pendências', data: topClientes.map(d => d[1]), backgroundColor: '#e67e22' }]
-    },
-    options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-  });
-}
+      charts.c4 = new Chart(document.getElementById('c4'), {
+        type: 'bar',
+        data: {
+          labels: topClientes.map(d => d[0]),
+          datasets: [{ label: 'Pendências', data: topClientes.map(d => d[1]), backgroundColor: '#e67e22' }]
+        },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+
   
   const analistasData = analistas.map(an => {
     const anAcessos = acessos.filter(ac => ac.analista_id === an.id && ac.status === 'liberado').length;
