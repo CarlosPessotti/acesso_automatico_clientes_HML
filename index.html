@@ -690,7 +690,7 @@ function renderDashboard() {
   const pend = acessos.filter(a => a.status === 'pendente').length;
   document.getElementById('k1').textContent = torres.length;
   document.getElementById('k2').textContent = analistas.length;
-  document.getElementById('k3').textContent = clientes.length;
+  document.getElementById('k3').textContent = new Set(clientes.map(function(c){ return c.nome })).size;
   document.getElementById('k4').textContent = lib;
   document.getElementById('k5').textContent = pend;
 
