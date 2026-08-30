@@ -10,7 +10,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   
 <style>
-
 /* PAGINAÇÃO */
 .pag{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:1rem;flex-wrap:wrap}
 .pag button{padding:6px 12px;border:1.5px solid var(--gm);background:var(--w);color:var(--d);border-radius:6px;font-size:.78rem;font-weight:600;cursor:pointer;transition:.2s;font-family:var(--f)}
@@ -212,24 +211,24 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
 .dm-toggle{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:.82rem;transition:.2s}
 .dm-toggle:hover{background:rgba(255,255,255,.25)} 
 
-
-
 /* BULK ACTIONS */
-.bulk-bar{display:none;align-items:center;gap:12px;background:var(--org);color:#fff;padding:10px 16px;border-radius:10px;margin-bottom:1rem;flex-wrap:wrap;animation:si .3s}
+.bulk-bar{display:none;align-items:center;gap:12px;background:var(--org);color:#fff;padding:10px 16px;border-radius:10px;margin-bottom:1rem;flex-wrap:wrap;}
 .bulk-bar.show{display:flex}
-.bulk-bar span{font-weight:700;font-size:.85rem}
-.bulk-bar select{padding:6px 10px;border-radius:6px;border:none;font-size:.8rem;font-family:var(--f)}
-.bulk-bar button{padding:7px 14px;border:none;border-radius:6px;font-size:.8rem;font-weight:700;cursor:pointer;font-family:var(--f);transition:.2s}
-.bulk-bar .bulk-apply{background:#fff;color:var(--org)}
-.bulk-bar .bulk-apply:hover{background:#f0f0f0}
-.bulk-bar .bulk-cancel{background:rgba(255,255,255,.2);color:#fff}
-.bulk-bar .bulk-cancel:hover{background:rgba(255,255,255,.35)}
-.chk-all,.chk-row{width:18px;height:18px;cursor:pointer;accent-color:var(--org)}
+.bulk-bar #bulk-count{font-weight:700}
+.bulk-bar select{background:rgba(255,255,255,.2);color:#fff;border:none;padding:6px 10px;border-radius:6px;font-size:.8rem;cursor:pointer}
+.bulk-bar button{background:#fff;color:var(--org);border:none;padding:6px 12px;border-radius:6px;font-weight:600;cursor:pointer;transition:.2s}
+.bulk-bar button:hover{background:#eee}
+.bulk-bar .bulk-cancel{background:rgba(255,255,255,.1);color:#fff}
+.bulk-bar .bulk-cancel:hover{background:rgba(255,255,255,.2)}
 .dark .bulk-bar{background:#2d1b3d}
-.dark .bulk-bar .bulk-apply{color:#2d1b3d}
-@media(max-width:768px){.bulk-bar{flex-direction:column;align-items:stretch;gap:8px;text-align:center}.bulk-bar select,.bulk-bar button{width:100%}}
+.dark .bulk-bar select{background:#1a1a2e;color:#e0e0e0;border-color:#3a3a5a}
+.dark .bulk-bar button{background:#16213e;color:#e0e0e0;border-color:#3a3a5a}
+.dark .bulk-bar button.bulk-apply{background:var(--org);color:#fff}
+.dark .bulk-bar button.bulk-apply:hover{background:var(--org)}
 
-  
+/* EMPTY STATE */
+.empty{text-align:center;color:#888;padding:20px;font-style:italic}
+.empty img{opacity:.6;margin-bottom:10px;height:60px}
 </style>
 </head>
 <body>
@@ -242,6 +241,7 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <button data-p="analistas" onclick="go(this)">👤 Analistas</button>
     <button data-p="acessos" onclick="go(this)">🔑 Acessos</button>
     <button data-p="clientes" onclick="go(this)">🏢 Clientes</button>
+    <button data-p="notificacoes" onclick="go(this)">🔔 Notificações</button>
     <button data-p="ultimo-login" onclick="go(this)">📍 Último Login</button>
     <button class="dm-toggle" onclick="toggleDarkMode()" id="dm-btn">🌙</button>
   </nav>
@@ -262,7 +262,6 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     </div>
   </div>
 </div>
-
 
 <!-- CONTEÚDO PRINCIPAL DA PÁGINA -->
 <div class="wrap">
@@ -331,6 +330,7 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <div class="fb">
       <div class="fg"><label>Filtrar por Torre</label><select id="f-xt" onchange="renderAcessos()"></select></div>
       <div class="fg"><label>Filtrar por Status</label><select id="f-xs" onchange="renderAcessos()"><option value="">Todos</option><option value="liberado">Liberado</option><option value="pendente">Pendente</option><option value="em_validacao">Em Validação</option></select></div>
+      <div class="fg"><label>Filtrar por Analista</label><select id="f-xa" onchange="renderAcessos()"></select></div> <!-- ADDED: Filtro de Analista para Acessos -->
       <div class="fg"><label>Data Início</label><input type="date" id="f-di" onchange="renderAcessos()"></div>
       <div class="fg"><label>Data Fim</label><input type="date" id="f-df" onchange="renderAcessos()"></div>
     </div>
@@ -369,6 +369,15 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     </div>
   </div>
 
+  <!-- PÁGINA: NOTIFICAÇÕES -->
+  <div class="pg" id="pg-notificacoes">
+    <div class="fc">
+      <h3>🔔 Central de Notificações</h3>
+      <p>Nenhuma notificação recente.</p>
+      <!-- Futuramente, o conteúdo de notificações pode ser renderizado aqui -->
+    </div>
+  </div>
+
   <!-- PÁGINA: ÚLTIMO LOGIN -->
   <div class="pg" id="pg-ultimo-login">
     <div class="fb">
@@ -385,8 +394,6 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
   
 </div> <!-- FIM DO <div class="wrap"> -->
 
-  
-
 <script>
 // ═══════════════════════════════════════
 // CONFIGURAÇÃO DE AMBIENTES
@@ -402,7 +409,7 @@ const ENVS = {
   }
 };
 
-let currentEnv = 'hml'; // Forçando HML para este arquivo
+let currentEnv = 'hml'; // Definido como HML
 let SB = ENVS[currentEnv].url;
 let AK = ENVS[currentEnv].key;
 let HD = {'apikey': AK, 'Authorization': 'Bearer ' + AK, 'Content-Type': 'application/json', 'Prefer': 'return=representation'};
@@ -513,7 +520,7 @@ async function loadAll() {
     renderAll();
   } catch (e) {
     setStatus(`Erro de conexão: ${e.message}`, true);
-    toast(e.message, 'er');
+    toast(`Erro de conexão: ${e.message}`, 'er');
     console.error('Erro ao carregar dados:', e);
   }
 }
@@ -544,22 +551,22 @@ function populateSelects() {
   const cSel = '<option value="">Todos</option>' + clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
   const cSelNoAll = clientes.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
 
-  // Preencher selects de Torree
+  // Preencher selects de Torre
   document.getElementById('i-at').innerHTML = `<option value="">Selecione...</option>${tSelNoAll}`; // Cadastro de Analista (Torre)
   document.getElementById('i-xt').innerHTML = `<option value="">Selecione...</option>${tSelNoAll}`; // Cadastro de Acesso (Torre)
-  document.getElementById('l-f-torre').innerHTML = tSel; // Último Login (Filtro por Torre)
-  document.getElementById('f-at').innerHTML = tSel; // Filtro de Analistas (Torre)
-  document.getElementById('f-xt').innerHTML = tSel; // Filtro de Acessos (Torre)
-  document.getElementById('f-ct').innerHTML = tSel; // Filtro de Clientes (Torre)
+  if (document.getElementById('l-f-torre')) document.getElementById('l-f-torre').innerHTML = tSel; // Último Login (Filtro por Torre)
+  if (document.getElementById('f-at')) document.getElementById('f-at').innerHTML = tSel; // Filtro de Analistas (Torre)
+  if (document.getElementById('f-xt')) document.getElementById('f-xt').innerHTML = tSel; // Filtro de Acessos (Torre)
+  if (document.getElementById('f-ct')) document.getElementById('f-ct').innerHTML = tSel; // Filtro de Clientes (Torre)
 
   // Preencher selects de Analista
   document.getElementById('i-xa').innerHTML = `<option value="">Selecione...</option>${aSelNoAll}`; // Cadastro de Acesso (Analista)
-  document.getElementById('l-f-analista').innerHTML = aSel; // Último Login (Filtro por Analista)
-  // document.getElementById('f-xa').innerHTML = aSel; // Removido, parece duplicado/desnecessário no HTML atual.
+  if (document.getElementById('l-f-analista')) document.getElementById('l-f-analista').innerHTML = aSel; // Último Login (Filtro por Analista)
+  if (document.getElementById('f-xa')) document.getElementById('f-xa').innerHTML = aSel; // Filtro de Acessos (Analista)
 
   // Preencher selects de Cliente
   document.getElementById('i-xc').innerHTML = `<option value="">Selecione...</option>${cSelNoAll}`; // Cadastro de Acesso (Cliente)
-  document.getElementById('l-f-cliente').innerHTML = cSel; // Último Login (Filtro por Cliente)
+  if (document.getElementById('l-f-cliente')) document.getElementById('l-f-cliente').innerHTML = cSel; // Último Login (Filtro por Cliente)
 }
 
 // ═══════════════════════════════════════
@@ -577,7 +584,7 @@ function renderCharts() {
 
   // c1: Analistas x Liberados x Contratos
   var c1Data = analistas.map(function(a){var lib=acessos.filter(x=>x.analista_id===a.id&&x.status==='liberado').length;var cont=clientes.filter(x=>x.torre_id===a.torre_id).length;return{n:a.nome.split(' ')[0],lib:lib,cont:cont}}).sort((a,b)=>b.lib-a.lib).slice(0,10);
-  charts.c1=new Chart(document.getElementById('c1'),{type:'bar',data:{labels:c1Data.map(d=>d.n),datasets:[{label:'Liberados',data:c1Data.map(d=>d.lib),backgroundColor:'#2ecc71'},{label:'Contratos na Torre',data:c1Data.map(d=>d.cont),backgroundColor:'#ccc',type:'line',fill:false,borderColor:'#aaa',borderDash:[5,5]}]},options:{responsive:true,maintainAspectRatio:false}});
+  charts.c1=new Chart(document.getElementById('c1'),{type:'bar',data:{labels:c1Data.map(d=>d.n),datasets:[{label:'Liberados',data:c1Data.map(d=>d.lib),backgroundColor:'#2ecc71'},{label:'Contratos na Torre',data:c1Data.map(d=>d.cont),backgroundColor:'#ccc',type:'line',fill:false,borderColor:'#aaa',borderDash:[5,5]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
 
   // c2: Pendências por Torre
   var pTorre=acessos.filter(a=>a.status==='pendente').reduce(function(acc,a){var nome=tNome(a.torre_id);acc[nome]=(acc[nome]||0)+1;return acc},{});
@@ -620,20 +627,17 @@ async function addAnalista() {
     loadAll();
   } catch (e) { toast('Erro ao adicionar analista: ' + e.message, 'er'); }
 }
-async function editAnalista(id) {
-  editingAnalistaId = id;
+function editAnalista(id) {
   const analista = analistas.find(a => a.id === id);
-  if (analista) {
-    document.getElementById('i-an').value = analista.nome;
-    document.getElementById('i-at').value = analista.torre_id;
-    document.getElementById('form-analista-title').textContent = '✏️ Editar Analista';
-    document.getElementById('btn-add-analista').textContent = 'Salvar';
-    document.getElementById('btn-add-analista').onclick = saveAnalista;
-    document.getElementById('btn-cancel-analista').style.display = 'inline-block';
-    document.getElementById('form-analista').classList.add('editing');
-  }
+  if (!analista) return;
+  editingAnalistaId = id;
+  document.getElementById('i-an').value = analista.nome;
+  document.getElementById('i-at').value = analista.torre_id;
+  document.getElementById('form-analista-title').textContent = '✏️ Editar Analista';
+  document.getElementById('btn-add-analista').textContent = 'Salvar Alterações';
+  document.getElementById('btn-cancel-analista').style.display = 'inline-block';
 }
-async function saveAnalista() {
+async function updateAnalista() {
   const nome = document.getElementById('i-an').value;
   const torreId = document.getElementById('i-at').value;
   if (!nome || !torreId) { toast('Preencha nome e torre!', 'er'); return; }
@@ -642,7 +646,7 @@ async function saveAnalista() {
     toast('Analista atualizado!');
     cancelEditAnalista();
     loadAll();
-  } catch (e) { toast('Erro ao salvar analista: ' + e.message, 'er'); }
+  } catch (e) { toast('Erro ao atualizar analista: ' + e.message, 'er'); }
 }
 function cancelEditAnalista() {
   editingAnalistaId = null;
@@ -650,12 +654,10 @@ function cancelEditAnalista() {
   document.getElementById('i-at').value = '';
   document.getElementById('form-analista-title').textContent = '➕ Cadastrar Analista';
   document.getElementById('btn-add-analista').textContent = 'Cadastrar';
-  document.getElementById('btn-add-analista').onclick = addAnalista;
   document.getElementById('btn-cancel-analista').style.display = 'none';
-  document.getElementById('form-analista').classList.remove('editing');
 }
-async function delAnalista(id, nome) {
-  modalShow(`Excluir Analista`, `Tem certeza que deseja excluir o analista "${nome}"?`, async () => {
+function delAnalista(id, nome) {
+  modalShow('Excluir Analista', `Deseja realmente excluir o analista "${nome}"?`, async function() {
     try {
       await sf(`/analistas?id=eq.${id}`, { method: 'DELETE' });
       toast('Analista excluído!');
@@ -664,15 +666,10 @@ async function delAnalista(id, nome) {
   });
 }
 function renderAnalistas(){
-  const fTorre = document.getElementById('f-at').value;
-  const fNome = document.getElementById('f-an').value.toLowerCase();
-  let filtered = analistas.filter(a =>
-    (!fTorre || a.torre_id == fTorre) &&
-    (!fNome || a.nome.toLowerCase().includes(fNome))
-  );
-  if(pgAnalistas > Math.ceil(filtered.length/PG_SIZE)) pgAnalistas = 1;
-  const paged = paginate(filtered, pgAnalistas);
-  document.getElementById('atb').innerHTML = paged.length === 0 ? '<tr><td colspan="5" class="empty">Nenhum analista</td></tr>' : paged.map(a=>`<tr${editingAnalistaId===a.id?' class="editing-row"':''}><td>${a.id}</td><td>${a.nome}</td><td>${tNome(a.torre_id)}</td><td>${clientes.filter(c=>c.torre_id===a.torre_id).length}</td><td><button class="bs bdo" onclick="editAnalista(${a.id})">✏️</button> <button class="bs bdr" onclick="delAnalista(${a.id},'${a.nome.replace(/'/g,"\\'")}')">🗑️</button></td></tr>`).join('');
+  let filtered=analistas.filter(a=>(!document.getElementById('f-at').value||a.torre_id==document.getElementById('f-at').value)&&(!document.getElementById('f-an').value||a.nome.toLowerCase().includes(document.getElementById('f-an').value.toLowerCase())));
+  if(pgAnalistas>Math.ceil(filtered.length/PG_SIZE))pgAnalistas=1;
+  let paged=paginate(filtered,pgAnalistas);
+  document.getElementById('atb').innerHTML=paged.length===0?'<tr><td colspan="5" class="empty">Nenhum analista</td></tr>':paged.map(a=>`<tr${editingAnalistaId===a.id?' class="editing-row"':''}><td>${a.id}</td><td>${a.nome}</td><td>${tNome(a.torre_id)}</td><td>${clientes.filter(c=>c.torre_id===a.torre_id).length}</td><td><button class="bs bdo" onclick="editAnalista(${a.id})">✏️</button> <button class="bs bdr" onclick="delAnalista(${a.id},'${a.nome.replace(/'/g,"\\'")}')">🗑️</button></td></tr>`).join('');
   renderPag('pag-analistas',filtered.length,pgAnalistas,'goPageAnalistas');
 }
 function goPageAnalistas(p){pgAnalistas=p;renderAnalistas()}
@@ -698,23 +695,21 @@ async function addAcesso() {
     loadAll();
   } catch (e) { toast('Erro ao adicionar acesso: ' + e.message, 'er'); }
 }
-async function editAcesso(id) {
-  editingAcessoId = id;
+function editAcesso(id) {
   const acesso = acessos.find(a => a.id === id);
-  if (acesso) {
-    document.getElementById('i-xt').value = acesso.torre_id;
-    document.getElementById('i-xa').value = acesso.analista_id;
-    document.getElementById('i-xc').value = acesso.cliente_id;
-    document.getElementById('i-xs').value = acesso.status;
-    document.getElementById('i-xo').value = acesso.observacao;
-    document.getElementById('form-acesso-title').textContent = '✏️ Editar Acesso';
-    document.getElementById('btn-add-acesso').textContent = 'Salvar';
-    document.getElementById('btn-add-acesso').onclick = saveAcesso;
-    document.getElementById('btn-cancel-acesso').style.display = 'inline-block';
-    document.getElementById('form-acesso').classList.add('editing');
-  }
+  if (!acesso) return;
+  editingAcessoId = id;
+  document.getElementById('i-xt').value = acesso.torre_id;
+  document.getElementById('i-xa').value = acesso.analista_id;
+  document.getElementById('i-xc').value = acesso.cliente_id;
+  document.getElementById('i-xs').value = acesso.status;
+  document.getElementById('i-xo').value = acesso.observacao;
+  document.getElementById('form-acesso-title').textContent = '✏️ Editar Acesso';
+  document.getElementById('btn-add-acesso').textContent = 'Salvar Alterações';
+  document.getElementById('btn-add-acesso').onclick = updateAcesso;
+  document.getElementById('btn-cancel-acesso').style.display = 'inline-block';
 }
-async function saveAcesso() {
+async function updateAcesso() {
   const torreId = document.getElementById('i-xt').value;
   const analistaId = document.getElementById('i-xa').value;
   const clienteId = document.getElementById('i-xc').value;
@@ -726,7 +721,7 @@ async function saveAcesso() {
     toast('Acesso atualizado!');
     cancelEditAcesso();
     loadAll();
-  } catch (e) { toast('Erro ao salvar acesso: ' + e.message, 'er'); }
+  } catch (e) { toast('Erro ao atualizar acesso: ' + e.message, 'er'); }
 }
 function cancelEditAcesso() {
   editingAcessoId = null;
@@ -737,12 +732,11 @@ function cancelEditAcesso() {
   document.getElementById('i-xo').value = '';
   document.getElementById('form-acesso-title').textContent = '➕ Cadastrar Acesso';
   document.getElementById('btn-add-acesso').textContent = 'Cadastrar';
-  document.getElementById('btn-add-acesso').onclick = addAcesso;
+  document.getElementById('btn-add-acesso').onclick = addAcesso; // Restaura a função original
   document.getElementById('btn-cancel-acesso').style.display = 'none';
-  document.getElementById('form-acesso').classList.remove('editing');
 }
-async function delAcesso(id) {
-  modalShow(`Excluir Acesso`, `Tem certeza que deseja excluir o acesso ${id}?`, async () => {
+function delAcesso(id) {
+  modalShow('Excluir Acesso', `Deseja realmente excluir o acesso ${id}?`, async function() {
     try {
       await sf(`/acessos?id=eq.${id}`, { method: 'DELETE' });
       toast('Acesso excluído!');
@@ -751,81 +745,19 @@ async function delAcesso(id) {
   });
 }
 function renderAcessos(){
-  const fTorre = document.getElementById('f-xt').value;
-  const fStatus = document.getElementById('f-xs').value;
-  const fAnalista = document.getElementById('f-xa')?.value; // Adicionado null-check
-  const fDataInicio = document.getElementById('f-di').value;
-  const fDataFim = document.getElementById('f-df').value;
-
-  let filtered = acessos.filter(a =>
-    (!fTorre || a.torre_id == fTorre) &&
-    (!fStatus || a.status === fStatus) &&
-    (!fAnalista || a.analista_id == fAnalista) && // Filtro por analista
-    (!fDataInicio || new Date(a.created_at) >= new Date(fDataInicio)) &&
-    (!fDataFim || new Date(a.created_at) <= new Date(fDataFim))
-  );
-  if(pgAcessos > Math.ceil(filtered.length/PG_SIZE)) pgAcessos = 1;
-  const paged = paginate(filtered, pgAcessos);
-  const statusMap = {liberado:['bg','Liberado'],pendente:['br','Pendente'],em_validacao:['bo','Em Validação']};
-  document.getElementById('xtb').innerHTML = paged.length===0?'<tr><td colspan="9" class="empty">Nenhum acesso</td></tr>':paged.map(a=>{var st=statusMap[a.status]||['bo',a.status];return`<tr${editingAcessoId===a.id?' class="editing-row"':''}><td><input type="checkbox" class="chk-row" data-id="${a.id}" onchange="bulkToggleOne(${a.id},this)"${bulkSelected.includes(a.id)?' checked':''}></td><td>${a.id}</td><td>${tNome(a.torre_id)}</td><td>${aNome(a.analista_id)}</td><td>${cNome(a.cliente_id)}</td><td><span class="bd ${st[0]}">${st[1]}</span></td><td class="obs">${a.observacao||'—'}</td><td>${formatDate(a.created_at)}</td><td><button class="bs bdo" onclick="editAcesso(${a.id})">✏️</button> <button class="bs bdr" onclick="delAcesso(${a.id})">🗑️</button></td></tr>`}).join('');
+  let filtered=acessos.filter(a=>(!document.getElementById('f-xt').value||a.torre_id==document.getElementById('f-xt').value)&&(!document.getElementById('f-xs').value||a.status===document.getElementById('f-xs').value)&&(!document.getElementById('f-xa').value||a.analista_id==document.getElementById('f-xa').value));
+  if(pgAcessos>Math.ceil(filtered.length/PG_SIZE))pgAcessos=1;
+  let paged=paginate(filtered,pgAcessos);
+  let statusMap={liberado:['bg','Liberado'],pendente:['br','Pendente'],em_validacao:['bo','Em Validação']};
+  document.getElementById('xtb').innerHTML=paged.length===0?'<tr><td colspan="9" class="empty">Nenhum acesso</td></tr>':paged.map(a=>{let st=statusMap[a.status]||['bo',a.status];return`<tr${editingAcessoId===a.id?' class="editing-row"':''}><td><input type="checkbox" class="chk-row" data-id="${a.id}" onchange="bulkToggleOne(${a.id},this)"${bulkSelected.includes(a.id)?' checked':''}></td><td>${a.id}</td><td>${tNome(a.torre_id)}</td><td>${aNome(a.analista_id)}</td><td>${cNome(a.cliente_id)}</td><td><span class="bd ${st[0]}">${st[1]}</span></td><td class="obs">${a.observacao||'—'}</td><td>${formatDate(a.created_at)}</td><td><button class="bs bdo" onclick="editAcesso(${a.id})">✏️</button> <button class="bs bdr" onclick="delAcesso(${a.id})">🗑️</button></td></tr>`}).join('');
   renderPag('pag-acessos',filtered.length,pgAcessos,'goPageAcessos');
   bulkUpdateBar();
 }
 function goPageAcessos(p){pgAcessos=p;renderAcessos()}
 
-// ═══════════════════════════════════════
-// FUNÇÕES DE CLIENTES
-// ═══════════════════════════════════════
-async function delCliente(id, nome) {
-  modalShow(`Excluir Cliente`, `Tem certeza que deseja excluir o cliente "${nome}"?`, async () => {
-    try {
-      await sf(`/clientes?id=eq.${id}`, { method: 'DELETE' });
-      toast('Cliente excluído!');
-      loadAll();
-    } catch (e) { toast('Erro ao excluir cliente: ' + e.message, 'er'); }
-  });
-}
-function renderClientes(){
-  const fTorre = document.getElementById('f-ct').value;
-  const fNome = document.getElementById('f-cn').value.toLowerCase();
-  let filtered = clientes.filter(c =>
-    (!fTorre || c.torre_id == fTorre) &&
-    (!fNome || c.nome.toLowerCase().includes(fNome))
-  );
-  if(pgClientes > Math.ceil(filtered.length/PG_SIZE)) pgClientes = 1;
-  const paged = paginate(filtered, pgClientes);
-  document.getElementById('ctb').innerHTML = paged.length === 0 ? '<tr><td colspan="4" class="empty">Nenhum cliente</td></tr>' : paged.map(c=>`<tr><td>${c.id}</td><td>${c.nome}</td><td>${tNome(c.torre_id)}</td><td><button class="bs bdr" onclick="delCliente(${c.id},'${c.nome.replace(/'/g,"\\'")}')">🗑️</button></td></tr>`).join('');
-  renderPag('pag-clientes',filtered.length,pgClientes,'goPageClientes');
-}
-function goPageClientes(p){pgClientes=p;renderClientes()}
-
-// ═══════════════════════════════════════
-// FUNÇÕES DE LOGIN (ÚLTIMO LOGIN)
-// ═══════════════════════════════════════
-function renderLogins(){
-  const fTorre = document.getElementById('l-f-torre').value;
-  const fAnalista = document.getElementById('l-f-analista').value;
-  const fCliente = document.getElementById('l-f-cliente').value;
-  const fData = document.getElementById('l-f-data').value;
-
-  let filtered = logins.filter(l =>
-    (!fTorre || l.torre_id == fTorre) &&
-    (!fAnalista || l.analista_id == fAnalista) &&
-    (!fCliente || l.cliente_id == fCliente) &&
-    (!fData || formatDate(l.created_at) === formatDate(fData))
-  );
-  if(pgLogins > Math.ceil(filtered.length/PG_SIZE)) pgLogins = 1;
-  const paged = paginate(filtered, pgLogins);
-  document.getElementById('ltb').innerHTML = paged.length === 0 ? '<tr><td colspan="6" class="empty">Nenhum registro de login</td></tr>' : paged.map(l=>`<tr><td>${l.id}</td><td>${tNome(l.torre_id)}</td><td>${aNome(l.analista_id)}</td><td>${cNome(l.cliente_id)}</td><td>${formatDate(l.created_at)}</td><td>—</td></tr>`).join('');
-  renderPag('pag-logins',filtered.length,pgLogins,'goPageLogins');
-}
-function goPageLogins(p){pgLogins=p;renderLogins()}
-
-// ═══════════════════════════════════════
-// BULK ACTIONS
-// ═══════════════════════════════════════
+// Bulk Actions Acessos
 function bulkToggleAll(el) {
-  const checkboxes = document.querySelectorAll('.chk-row');
+  var checkboxes = document.querySelectorAll('.chk-row');
   bulkSelected = [];
   checkboxes.forEach(function(cb) {
     cb.checked = el.checked;
@@ -839,14 +771,14 @@ function bulkToggleOne(id, el) {
     if (bulkSelected.indexOf(id) === -1) bulkSelected.push(id);
   } else {
     bulkSelected = bulkSelected.filter(function(x) { return x !== id; });
-    const allCb = document.querySelector('.chk-all');
+    var allCb = document.querySelector('.chk-all');
     if (allCb) allCb.checked = false;
   }
   bulkUpdateBar();
 }
 function bulkUpdateBar() {
-  const bar = document.getElementById('bulk-bar');
-  const count = document.getElementById('bulk-count');
+  var bar = document.getElementById('bulk-bar');
+  var count = document.getElementById('bulk-count');
   if (bulkSelected.length > 0) {
     bar.classList.add('show');
     count.textContent = bulkSelected.length + ' selecionado' + (bulkSelected.length > 1?'s':'');
@@ -856,19 +788,21 @@ function bulkUpdateBar() {
 }
 function bulkClear() {
   bulkSelected = [];
-  const allCb = document.querySelector('.chk-all');
+  var allCb = document.querySelector('.chk-all');
   if (allCb) allCb.checked = false;
-  document.querySelectorAll('.chk-row').forEach(function(cb) { cb.checked = false; });
+  document.querySelectorAll('.chk-row').forEach(function(cb) {
+    cb.checked = false;
+  });
   document.getElementById('bulk-status').value = '';
   bulkUpdateBar();
 }
 async function bulkApply() {
-  const newStatus = document.getElementById('bulk-status').value;
+  var newStatus = document.getElementById('bulk-status').value;
   if (!newStatus) { toast('Selecione um status', 'er'); return; }
   if (bulkSelected.length === 0) { toast('Nenhum acesso selecionado', 'er'); return; }
-  modalShow('Alteração em massa', 'Alterar ' + bulkSelected.length + ' acesso(s) para "' + newStatus + '"?', async function() {
+  modalShow('Alteração em massa', 'Alterar ' + bulkSelected.length + ' acesso(s) para "' + newStatus.replace('_','') + '"?', async function() {
     try {
-      const promises = bulkSelected.map(function(id) {
+      var promises = bulkSelected.map(function(id) {
         return sf('/acessos?id=eq.' + id, { method: 'PATCH', body: JSON.stringify({ status: newStatus }) });
       });
       await Promise.all(promises);
@@ -880,6 +814,146 @@ async function bulkApply() {
 }
 
 // ═══════════════════════════════════════
+// FUNÇÕES DE CLIENTES
+// ═══════════════════════════════════════
+function renderClientes(){
+  let ft=document.getElementById('f-ct').value;let fn=document.getElementById('f-cn').value.toLowerCase();
+  let filtered=clientes.filter(c=>(!ft||c.torre_id==ft)&&(!fn||c.nome.toLowerCase().includes(fn)));
+  if(pgClientes > Math.ceil(filtered.length/PG_SIZE))pgClientes=1;
+  let paged=paginate(filtered,pgClientes);
+  document.getElementById('ctb').innerHTML=paged.length===0?'<tr><td colspan="4" class="empty">Nenhum cliente</td></tr>':paged.map(c=>`<tr><td>${c.id}</td><td>${c.nome}</td><td>${tNome(c.torre_id)}</td><td><button class="bs bdr" onclick="delCliente(${c.id},'${c.nome.replace(/'/g,"\\'")}')">🗑️</button></td></tr>`).join('');
+  renderPag('pag-clientes',filtered.length,pgClientes,'goPageClientes');
+}
+function goPageClientes(p){pgClientes=p;renderClientes()}
+async function delCliente(id, nome) {
+  modalShow('Excluir Cliente', `Deseja realmente excluir o cliente "${nome}"?`, async function() {
+    try {
+      await sf(`/clientes?id=eq.${id}`, { method: 'DELETE' });
+      toast('Cliente excluído!');
+      loadAll();
+    } catch (e) { toast('Erro ao excluir cliente: ' + e.message, 'er'); }
+  });
+}
+
+// ═══════════════════════════════════════
+// FUNÇÕES DE LOGIN
+// ═══════════════════════════════════════
+function renderLogins(){
+  let ft = document.getElementById('l-f-torre').value;
+  let fa = document.getElementById('l-f-analista').value;
+  let fc = document.getElementById('l-f-cliente').value;
+  let fd = document.getElementById('l-f-data').value;
+
+  let filtered = logins.filter(l => 
+    (!ft || l.torre_id == ft) &&
+    (!fa || l.analista_id == fa) &&
+    (!fc || l.cliente_id == fc) &&
+    (!fd || formatDate(l.created_at) === formatDate(fd))
+  );
+
+  if(pgLogins > Math.ceil(filtered.length/PG_SIZE))pgLogins=1;
+  let paged=paginate(filtered,pgLogins);
+  document.getElementById('ltb').innerHTML=paged.length===0?'<tr><td colspan="6" class="empty">Nenhum registro de login</td></tr>':paged.map(l=>`<tr><td>${l.id}</td><td>${tNome(l.torre_id)}</td><td>${aNome(l.analista_id)}</td><td>${cNome(l.cliente_id)}</td><td>${formatDate(l.created_at)}</td><td><button class="bs bdr" onclick="delLogin(${l.id})">🗑️</button></td></tr>`).join('');
+  renderPag('pag-logins',filtered.length,pgLogins,'goPageLogins');
+}
+function goPageLogins(p){pgLogins=p;renderLogins()}
+async function delLogin(id) {
+  modalShow('Excluir Registro de Login', `Deseja realmente excluir o registro de login ${id}?`, async function() {
+    try {
+      await sf(`/logins?id=eq.${id}`, { method: 'DELETE' });
+      toast('Registro de login excluído!');
+      loadAll();
+    } catch (e) { toast('Erro ao excluir registro de login: ' + e.message, 'er'); }
+  });
+}
+
+// ═══════════════════════════════════════
+// EXPORT FUNCTIONS
+// ═══════════════════════════════════════
+function getFileName(prefix) {
+    const now = new Date();
+    const date = now.toLocaleDateString('pt-BR').replace(/\//g, '-');
+    const time = now.toLocaleTimeString('pt-BR', { hour12: false }).replace(/:/g, '-');
+    return `${prefix}-${date}-${time}`;
+}
+
+async function exportDash(type) {
+    const data = torres.map(t => {
+        const tc = clientes.filter(c => c.torre_id === t.id).length;
+        const ta = analistas.filter(a => a.torre_id === t.id).length;
+        const ax = acessos.filter(a => a.torre_id === t.id);
+        const lib = ax.filter(a => a.status === 'liberado').length;
+        const pen = ax.filter(a => a.status === 'pendente').length;
+        const pct = ax.length ? (lib / ax.length * 100).toFixed(1) : '0';
+        return { Torre: t.nome, Clientes: tc, Analistas: ta, Liberados: lib, Pendentes: pen, '% Liberados': pct };
+    });
+    exportData(data, ['Torre', 'Clientes', 'Analistas', 'Liberados', 'Pendentes', '% Liberados'], getFileName('resumo-torres'), type);
+}
+
+async function exportAcessos(type) {
+    const filteredAcessos = acessos.filter(a =>
+        (!document.getElementById('f-xt').value || a.torre_id == document.getElementById('f-xt').value) &&
+        (!document.getElementById('f-xs').value || a.status === document.getElementById('f-xs').value) &&
+        (!document.getElementById('f-xa').value || a.analista_id == document.getElementById('f-xa').value)
+    );
+    const data = filteredAcessos.map(a => ({
+        ID: a.id,
+        Torre: tNome(a.torre_id),
+        Analista: aNome(a.analista_id),
+        Cliente: cNome(a.cliente_id),
+        Status: a.status,
+        Observacao: a.observacao || '',
+        Data: formatDate(a.created_at)
+    }));
+    exportData(data, ['ID', 'Torre', 'Analista', 'Cliente', 'Status', 'Observacao', 'Data'], getFileName('acessos'), type);
+}
+
+function exportData(data, headers, filename, type) {
+    if (data.length === 0) {
+        toast('Nenhum dado para exportar.', 'er');
+        return;
+    }
+    const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Dados");
+
+    switch (type) {
+        case 'csv':
+            XLSX.writeFile(workbook, `${filename}.csv`);
+            break;
+        case 'xlsx':
+            XLSX.writeFile(workbook, `${filename}.xlsx`);
+            break;
+        case 'txt':
+            let txtContent = headers.join('\t') + '\n';
+            data.forEach(row => {
+                txtContent += headers.map(h => row[h]).join('\t') + '\n';
+            });
+            const blobTxt = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
+            const linkTxt = document.createElement('a');
+            linkTxt.href = URL.createObjectURL(blobTxt);
+            linkTxt.download = `${filename}.txt`;
+            linkTxt.click();
+            break;
+        case 'pdf':
+            const doc = new jspdf.jsPDF();
+            doc.autoTable({
+                head: [headers],
+                body: data.map(row => headers.map(h => row[h])),
+                startY: 10,
+                styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+                headStyles: { fillColor: [parseInt(getComputedStyle(document.documentElement).getPropertyValue('--org').substring(1,3), 16), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--org').substring(3,5), 16), parseInt(getComputedStyle(document.documentElement).getPropertyValue('--org').substring(5,7), 16)] }
+            });
+            doc.save(`${filename}.pdf`);
+            break;
+        default:
+            toast('Formato de exportação não suportado.', 'er');
+    }
+    toast(`Dados exportados como ${type.toUpperCase()}!`);
+}
+
+
+// ═══════════════════════════════════════
 // DARK MODE
 // ═══════════════════════════════════════
 function toggleDarkMode() {
@@ -888,17 +962,19 @@ function toggleDarkMode() {
   localStorage.setItem('darkMode', isDark);
   document.getElementById('dm-btn').textContent = isDark ? '☀️' : '🌙';
 }
-
-// ═══════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async () => {
+function loadDarkMode() {
   if (localStorage.getItem('darkMode') === 'true') {
     document.body.classList.add('dark');
     document.getElementById('dm-btn').textContent = '☀️';
-  } else {
-    document.getElementById('dm-btn').textContent = '🌙';
   }
+}
+
+// ═══════════════════════════════════════
+// INITIALIZATION
+// ═══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+  loadDarkMode();
+  go(document.querySelector('.nav nav button[data-p="dashboard"]')); // Ativa o dashboard ao carregar
   await loadAll();
 });
 </script>
