@@ -494,6 +494,81 @@ function modalNo() {
   document.getElementById('modal').classList.remove('show');
   modalCb = null;
 }
+
+/* ═══════════════════════════════════════
+   BULK ACTIONS
+   ═══════════════════════════════════════ */
+var bulkSelected = [];
+
+function bulkToggleAll(el) {
+  var checkboxes = document.querySelectorAll('.chk-row');
+  bulkSelected = [];
+  checkboxes.forEach(function(cb) {
+    cb.checked = el.checked;
+    if (el.checked) bulkSelected.push(Number(cb.dataset.id));
+  });
+  bulkUpdateBar();
+}
+
+function bulkToggleOne(id, el) {
+  id = Number(id);
+  if (el.checked) {
+    if (bulkSelected.indexOf(id) === -1) bulkSelected.push(id);
+  } else {
+    bulkSelected = bulkSelected.filter(function(x) { return x !== id; });
+    var allCb = document.querySelector('.chk-all');
+    if (allCb) allCb.checked = false;
+  }
+  bulkUpdateBar();
+}
+
+function bulkUpdateBar() {
+  var bar = document.getElementById('bulk-bar');
+  var count = document.getElementById('bulk-count');
+  if (bulkSelected.length > 0) {
+    bar.classList.add('show');
+    count.textContent = bulkSelected.length + ' selecionado' + (bulkSelected.length > 1 ? 's' : '');
+  } else {
+    bar.classList.remove('show');
+  }
+}
+
+function bulkClear() {
+  bulkSelected = [];
+  var allCb = document.querySelector('.chk-all');
+  if (allCb) allCb.checked = false;
+  document.querySelectorAll('.chk-row').forEach(function(cb) { cb.checked = false; });
+  document.getElementById('bulk-status').value = '';
+  bulkUpdateBar();
+}
+
+async function bulkApply() {
+  var newStatus = document.getElementById('bulk-status').value;
+  if (!newStatus) { toast('Selecione um status', 'er'); return; }
+  if (bulkSelected.length === 0) { toast('Nenhum acesso selecionado', 'er'); return; }
+
+  modalShow(
+    '⚠️ Alteração em massa',
+    'Alterar ' + bulkSelected.length + ' acesso(s) para "' + newStatus.replace('_', ' ') + '"?',
+    async function() {
+      try {
+        var promises = bulkSelected.map(function(id) {
+          return sf('/acessos?id=eq.' + id, {
+            method: 'PATCH',
+            body: JSON.stringify({ status: newStatus })
+          });
+        });
+        await Promise.all(promises);
+        toast(bulkSelected.length + ' acessos atualizados!');
+        bulkClear();
+        await loadAll();
+      } catch (e) {
+        toast('Erro: ' + e.message, 'er');
+      }
+    }
+  );
+}
+  
 /* ═══════════════════════════════════════
    DARK MODE
    ═══════════════════════════════════════ */
@@ -1026,79 +1101,7 @@ function exportLogins(fmt) {toast('Exportação de logins em desenvolvimento', '
 
 window.addEventListener('DOMContentLoaded', loadAll);
 
-/* ═══════════════════════════════════════
-  BULK ACTIONS
-   ═══════════════════════════════════════ */
-var bulkSelected = [];
 
-function bulkToggleAll(el) {
-  var checkboxes = document.querySelectorAll('.chk-row');
-  bulkSelected = [];
-  checkboxes.forEach(function(cb) {
-    cb.checked = el.checked;
-    if (el.checked) bulkSelected.push(Number(cb.dataset.id));
-  });
-  bulkUpdateBar();
-}
-
-function bulkToggleOne(id, el) {
-  id = Number(id);
-  if (el.checked) {
-    if (bulkSelected.indexOf(id) === -1) bulkSelected.push(id);
-  } else {
-    bulkSelected = bulkSelected.filter(function(x) { return x !== id; });
-    var allCb = document.querySelector('.chk-all');
-    if (allCb) allCb.checked = false;
-  }
-  bulkUpdateBar();
-}
-
-function bulkUpdateBar() {
-  var bar = document.getElementById('bulk-bar');
-  var count = document.getElementById('bulk-count');
-  if (bulkSelected.length > 0) {
-    bar.classList.add('show');
-    count.textContent = bulkSelected.length + ' selecionado' + (bulkSelected.length > 1 ? 's' : '');
-  } else {
-    bar.classList.remove('show');
-  }
-}
-
-function bulkClear() {
-  bulkSelected = [];
-  var allCb = document.querySelector('.chk-all');
-  if (allCb) allCb.checked = false;
-  document.querySelectorAll('.chk-row').forEach(function(cb) { cb.checked = false; });
-  document.getElementById('bulk-status').value = '';
-  bulkUpdateBar();
-}
-
-async function bulkApply() {
-  var newStatus = document.getElementById('bulk-status').value;
-  if (!newStatus) { toast('Selecione um status', 'er'); return; }
-  if (bulkSelected.length === 0) { toast('Nenhum acesso selecionado', 'er'); return; }
-
-  modalShow(
-    '⚠️ Alteração em massa',
-    'Alterar ' + bulkSelected.length + ' acesso(s) para "' + newStatus.replace('_', ' ') + '"?',
-    async function() {
-      try {
-        var promises = bulkSelected.map(function(id) {
-          return sf('/acessos?id=eq.' + id, {
-            method: 'PATCH',
-            body: JSON.stringify({ status: newStatus })
-          });
-        });
-        await Promise.all(promises);
-        toast(bulkSelected.length + ' acessos atualizados!');
-        bulkClear();
-        await loadAll();
-      } catch (e) {
-        toast('Erro: ' + e.message, 'er');
-      }
-    }
-  );
-}
   
 </script>
 </body>
