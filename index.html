@@ -234,6 +234,7 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
 </head>
 <body>
 
+<!-- NAVEGAÇÃO SUPERIOR -->
 <div class="nav">
   <h1>🔐 Gestão de Acessos — Torres <span class="env-badge">HML</span></h1>
   <nav>
@@ -241,14 +242,15 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
     <button data-p="analistas" onclick="go(this)">👤 Analistas</button>
     <button data-p="acessos" onclick="go(this)">🔑 Acessos</button>
     <button data-p="clientes" onclick="go(this)">🏢 Clientes</button>
-<button data-p="ultimo-login" onclick="go(this)">📍 Último Login</button>
-<button class="dm-toggle" onclick="toggleDark()" id="dm-btn">🌙</button>
-</nav>
-
+    <button data-p="ultimo-login" onclick="go(this)">📍 Último Login</button>
+    <button class="dm-toggle" onclick="toggleDarkMode()" id="dm-btn">🌙</button>
+  </nav>
 </div>
-<div class="tc" id="toast-container">
-<div class="sbar" id="sbar"><span class="sd"></span>Conectando...</div>>
-  <div id="toast-container" class="tc"></div>
+
+<!-- ELEMENTOS FLUTUANTES (OVERLAYS) -->
+<div id="toast-container" class="tc"></div>
+
+<div class="sbar" id="sbar"><span class="sd"></span>Conectando...</div>
 
 <div class="modal-bg" id="modal">
   <div class="modal">
@@ -261,160 +263,128 @@ body.dark{background:#1a1a2e;color:#e0e0e0}
   </div>
 </div>
 
+
+<!-- CONTEÚDO PRINCIPAL DA PÁGINA -->
 <div class="wrap">
 
-<!-- DASHBOARD -->
-<div class="pg act" id="pg-dashboard">
-  <div class="kr">
-    <div class="kc"><div class="n" id="k1">-</div><div class="l">Torres</div></div>
-    <div class="kc"><div class="n" id="k2">-</div><div class="l">Analistas</div></div>
-    <div class="kc"><div class="n" id="k3">-</div><div class="l">Contratos</div></div>
-    <div class="kc g"><div class="n" id="k4">-</div><div class="l">Acessos Liberados</div></div>
-    <div class="kc o"><div class="n" id="k5">-</div><div class="l">Acessos Pendentes</div></div>
-  </div>
-  <div class="export-bar">
-    <button onclick="exportDash('csv')">📄 CSV</button>
-    <button onclick="exportDash('xlsx')">📊 Excel</button>
-    <button onclick="exportDash('txt')">📝 TXT</button>
-    <button onclick="exportDash('pdf')">📕 PDF</button>
-  </div>
-  <div class="cg">
-    <div class="cc"><h3>Analistas × Liberados × Contratos</h3><div class="chart-container"><canvas id="c1"></canvas></div></div>
-    <div class="cc"><h3>Pendências por Torre</h3><div class="chart-container"><canvas id="c2"></canvas></div></div>
-  </div>
-  <div class="cg">
-    <div class="cc"><h3>% Liberados por Torre</h3><div class="chart-container"><canvas id="c3"></canvas></div></div>
-    <div class="cc"><h3>Top 10 Clientes Pendências</h3><div class="chart-container"><canvas id="c4"></canvas></div></div>
-  </div>
-  <div class="tw"><h3>Resumo por Torre</h3><table><thead><tr><th>Torre</th><th>Clientes</th><th>Analistas</th><th>Liberados</th><th>Pendentes</th><th>% Liberados</th></tr></thead><tbody id="dtb"></tbody></table></div>
-</div>
-
-<!-- ANALISTAS -->
-<div class="pg" id="pg-analistas">
-  <div class="fc" id="form-analista">
-    <h3 id="form-analista-title">➕ Cadastrar Analista</h3>
-    <div class="fr">
-      <div class="fg"><label>Nome</label><input type="text" id="i-an"></div>
-      <div class="fg"><label>Torre</label><select id="i-at"></select></div>
+  <!-- PÁGINA: DASHBOARD -->
+  <div class="pg act" id="pg-dashboard">
+    <div class="kr">
+      <div class="kc"><div class="n" id="k1">-</div><div class="l">Torres</div></div>
+      <div class="kc"><div class="n" id="k2">-</div><div class="l">Analistas</div></div>
+      <div class="kc"><div class="n" id="k3">-</div><div class="l">Contratos</div></div>
+      <div class="kc g"><div class="n" id="k4">-</div><div class="l">Acessos Liberados</div></div>
+      <div class="kc o"><div class="n" id="k5">-</div><div class="l">Acessos Pendentes</div></div>
     </div>
-    <button class="btn bp" id="btn-add-analista" onclick="addAnalista()">Cadastrar</button>
-    <button class="btn bc" id="btn-cancel-analista" style="display:none" onclick="cancelEditAnalista()">Cancelar</button>
-  </div>
-  <div class="fb">
-    <div class="fg"><label>Filtrar por Torre</label><select id="f-at" onchange="renderAnalistas()"></select></div>
-    <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-an" oninput="renderAnalistas()"></div>
-  </div>
- 
-  <div class="tw"><h3>Lista de Analistas</h3>
-<table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Contratos</th><th>Ações</th></tr></thead><tbody id="atb"></tbody></table>
-<div class="pag" id="pag-analistas"></div>
-</div>
-</div>
-  
-<button class="dm-toggle" onclick="toggleDarkMode()">Modo Escuro</button>
-  
-<!-- ACESSOS -->
-<div class="pg" id="pg-acessos">
-  <div class="fc" id="form-acesso">
-    <h3 id="form-acesso-title">➕ Cadastrar Acesso</h3>
-    <div class="fr">
-      <div class="fg"><label>Torre</label><select id="i-xt"></select></div>
-      <div class="fg"><label>Analista</label><select id="i-xa"></select></div>
-      <div class="fg"><label>Cliente</label><select id="i-xc"></select></div>
-      <div class="fg"><label>Status</label><select id="i-xs"><option value="pendente">Pendente</option><option value="liberado">Liberado</option><option value="em_validacao">Em Validação</option></select></div>
+    <div class="export-bar">
+      <button onclick="exportDash('csv')">📄 CSV</button>
+      <button onclick="exportDash('xlsx')">📊 Excel</button>
+      <button onclick="exportDash('txt')">📝 TXT</button>
+      <button onclick="exportDash('pdf')">📕 PDF</button>
     </div>
-    <div class="fg"><label>Observação</label><textarea id="i-xo"></textarea></div>
-    <button class="btn bp" id="btn-add-acesso" onclick="addAcesso()">Cadastrar</button>
-    <button class="btn bc" id="btn-cancel-acesso" style="display:none" onclick="cancelEditAcesso()">Cancelar</button>
-  </div>
-  <div class="fb">
-    <div class="fg"><label>Filtrar por Torre</label><select id="f-xt" onchange="renderAcessos()"></select></div>
-    <div class="fg"><label>Filtrar por Status</label><select id="f-xs" onchange="renderAcessos()"><option value="">Todos</option><option value="liberado">Liberado</option><option value="pendente">Pendente</option><option value="em_validacao">Em Validação</option></select></div>
-    <div class="fg"><label>Data Início</label><input type="date" id="f-di" onchange="renderAcessos()"></div>
-    <div class="fg"><label>Data Fim</label><input type="date" id="f-df" onchange="renderAcessos()"></div>
-  </div>
-  <div class="bulk-bar" id="bulk-bar">
-  <span id="bulk-count">0 selecionados</span>
-  <select id="bulk-status">
-    <option value="">Alterar status para...</option>
-    <option value="liberado">✅ Liberado</option>
-    <option value="pendente">⏳ Pendente</option>
-    <option value="em_validacao">🔍 Em Validação</option>
-  </select>
-  <button class="bulk-apply" onclick="bulkApply()">Aplicar</button>
-  <button class="bulk-cancel" onclick="bulkClear()">Cancelar</button>
-</div>
-  <div class="export-bar">
-    <button onclick="exportAcessos('csv')">📄 CSV</button>
-    <button onclick="exportAcessos('xlsx')">📊 Excel</button>
-    <button onclick="exportAcessos('txt')">📝 TXT</button>
-    <button onclick="exportAcessos('pdf')">📕 PDF</button>
-  </div>
-
-<div class="tw"><h3>Lista de Acessos</h3>
-<table><thead><tr><th><input type="checkbox" class="chk-all" onchange="bulkToggleAll(this)"></th><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Status</th><th>Observação</th><th>Data</th><th>Ações</th></tr></thead><tbody id="xtb"></tbody></table>
-<div class="pag" id="pag-acessos"></div>
-</div>
-
-
-<!-- CLIENTES -->
-<div class="pg" id="pg-clientes">
-  <div class="fc" id="form-cliente">
-    <h3 id="form-cliente-title">➕ Cadastrar Cliente</h3>
-    <div class="fr">
-      <div class="fg"><label>Nome</label><input type="text" id="i-cn"></div>
-      <div class="fg"><label>Torre</label><select id="i-ct"></select></div>
+    <div class="cg">
+      <div class="cc"><h3>Analistas × Liberados × Contratos</h3><div class="chart-container"><canvas id="c1"></canvas></div></div>
+      <div class="cc"><h3>Pendências por Torre</h3><div class="chart-container"><canvas id="c2"></canvas></div></div>
     </div>
-    <button class="btn bp" id="btn-add-cliente" onclick="addCliente()">Cadastrar</button>
-    <button class="btn bc" id="btn-cancel-cliente" style="display:none" onclick="cancelEditCliente()">Cancelar</button>
-  </div>
-  <div class="fb">
-    <div class="fg"><label>Filtrar por Torre</label><select id="f-ct" onchange="renderClientes()"></select></div>
-    <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-cn" oninput="renderClientes()"></div>
-  </div>
-
-<div class="tw"><h3>Lista de Clientes</h3>
-<table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Ações</th></tr></thead><tbody id="ctb"></tbody></table>
-<div class="pag" id="pag-clientes"></div>
-</div>
-</div>
-
-<!-- ÚLTIMO LOGIN -->
-<div class="pg" id="pg-ultimo-login">
-  <div class="kr">
-    <div class="kc crit"><div class="n" id="l-k1">-</div><div class="l">Críticos (&gt;10d)</div></div>
-    <div class="kc warn"><div class="n" id="l-k2">-</div><div class="l">Atenção (5-10d)</div></div>
-    <div class="kc ok"><div class="n" id="l-k3">-</div><div class="l">OK (&lt;5d)</div></div>
-  </div>
-  <div class="fc" id="form-login">
-    <h3 id="form-login-title">➕ Registrar Último Login</h3>
-    <div class="fr">
-      <div class="fg"><label>Torre</label><select id="l-i-torre"></select></div>
-      <div class="fg"><label>Analista</label><select id="l-i-analista"></select></div>
-      <div class="fg"><label>Cliente</label><select id="l-i-cliente"></select></div>
-      <div class="fg"><label>Data/Hora Login</label><input type="datetime-local" id="l-i-data"></div>
+    <div class="cg">
+      <div class="cc"><h3>% Liberados por Torre</h3><div class="chart-container"><canvas id="c3"></canvas></div></div>
+      <div class="cc"><h3>Top 10 Clientes Pendências</h3><div class="chart-container"><canvas id="c4"></canvas></div></div>
     </div>
-    <button class="btn bp" id="btn-add-login" onclick="addLogin()">Registrar</button>
-    <button class="btn bc" id="btn-cancel-login" style="display:none" onclick="cancelEditLogin()">Cancelar</button>
+    <div class="tw"><h3>Resumo por Torre</h3><table><thead><tr><th>Torre</th><th>Clientes</th><th>Analistas</th><th>Liberados</th><th>Pendentes</th><th>% Liberados</th></tr></thead><tbody id="dtb"></tbody></table></div>
   </div>
-  <div class="fb">
-    <div class="fg"><label>Filtrar por Torre</label><select id="l-f-torre" onchange="renderLogins()"></select></div>
-    <div class="fg"><label>Filtrar por Criticidade</label><select id="l-f-crit" onchange="renderLogins()"><option value="">Todas</option><option value="crit">Crítico</option><option value="warn">Atenção</option><option value="ok">OK</option></select></div>
+
+  <!-- PÁGINA: ANALISTAS -->
+  <div class="pg" id="pg-analistas">
+    <div class="fc" id="form-analista">
+      <h3 id="form-analista-title">➕ Cadastrar Analista</h3>
+      <div class="fr">
+        <div class="fg"><label>Nome</label><input type="text" id="i-an"></div>
+        <div class="fg"><label>Torre</label><select id="i-at"></select></div>
+      </div>
+      <button class="btn bp" id="btn-add-analista" onclick="addAnalista()">Cadastrar</button>
+      <button class="btn bc" id="btn-cancel-analista" style="display:none" onclick="cancelEditAnalista()">Cancelar</button>
+    </div>
+    <div class="fb">
+      <div class="fg"><label>Filtrar por Torre</label><select id="f-at" onchange="renderAnalistas()"></select></div>
+      <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-an" oninput="renderAnalistas()"></div>
+    </div>
+    <div class="tw"><h3>Lista de Analistas</h3>
+      <table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Contratos</th><th>Ações</th></tr></thead><tbody id="atb"></tbody></table>
+      <div class="pag" id="pag-analistas"></div>
+    </div>
   </div>
-  <div class="export-bar">
-    <button onclick="exportLogins('csv')">📄 CSV</button>
-    <button onclick="exportLogins('xlsx')">📊 Excel</button>
-    <button onclick="exportLogins('txt')">📝 TXT</button>
-    <button onclick="exportLogins('pdf')">📕 PDF</button>
+
+  <!-- PÁGINA: ACESSOS -->
+  <div class="pg" id="pg-acessos">
+    <div class="fc" id="form-acesso">
+      <h3 id="form-acesso-title">➕ Cadastrar Acesso</h3>
+      <div class="fr">
+        <div class="fg"><label>Torre</label><select id="i-xt"></select></div>
+        <div class="fg"><label>Analista</label><select id="i-xa"></select></div>
+        <div class="fg"><label>Cliente</label><select id="i-xc"></select></div>
+        <div class="fg"><label>Status</label><select id="i-xs"><option value="pendente">Pendente</option><option value="liberado">Liberado</option><option value="em_validacao">Em Validação</option></select></div>
+      </div>
+      <div class="fg"><label>Observação</label><textarea id="i-xo"></textarea></div>
+      <button class="btn bp" id="btn-add-acesso" onclick="addAcesso()">Cadastrar</button>
+      <button class="btn bc" id="btn-cancel-acesso" style="display:none" onclick="cancelEditAcesso()">Cancelar</button>
+    </div>
+    <div class="fb">
+      <div class="fg"><label>Filtrar por Torre</label><select id="f-xt" onchange="renderAcessos()"></select></div>
+      <div class="fg"><label>Filtrar por Status</label><select id="f-xs" onchange="renderAcessos()"><option value="">Todos</option><option value="liberado">Liberado</option><option value="pendente">Pendente</option><option value="em_validacao">Em Validação</option></select></div>
+      <div class="fg"><label>Data Início</label><input type="date" id="f-di" onchange="renderAcessos()"></div>
+      <div class="fg"><label>Data Fim</label><input type="date" id="f-df" onchange="renderAcessos()"></div>
+    </div>
+    <div class="bulk-bar" id="bulk-bar">
+      <span id="bulk-count">0 selecionados</span>
+      <select id="bulk-status">
+        <option value="">Alterar status para...</option>
+        <option value="liberado">✅ Liberado</option>
+        <option value="pendente">⏳ Pendente</option>
+        <option value="em_validacao">🔍 Em Validação</option>
+      </select>
+      <button class="bulk-apply" onclick="bulkApply()">Aplicar</button>
+      <button class="bulk-cancel" onclick="bulkClear()">Cancelar</button>
+    </div>
+    <div class="export-bar">
+      <button onclick="exportAcessos('csv')">📄 CSV</button>
+      <button onclick="exportAcessos('xlsx')">📊 Excel</button>
+      <button onclick="exportAcessos('txt')">📝 TXT</button>
+      <button onclick="exportAcessos('pdf')">📕 PDF</button>
+    </div>
+    <div class="tw"><h3>Lista de Acessos</h3>
+      <table><thead><tr><th><input type="checkbox" class="chk-all" onchange="bulkToggleAll(this)"></th><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Status</th><th>Observação</th><th>Data</th><th>Ações</th></tr></thead><tbody id="xtb"></tbody></table>
+      <div class="pag" id="pag-acessos"></div>
+    </div>
+  </div>
+
+  <!-- PÁGINA: CLIENTES -->
+  <div class="pg" id="pg-clientes">
+    <div class="fb">
+      <div class="fg"><label>Filtrar por Torre</label><select id="f-ct" onchange="renderClientes()"></select></div>
+      <div class="fg"><label>Filtrar por Nome</label><input type="text" id="f-cn" oninput="renderClientes()"></div>
+    </div>
+    <div class="tw"><h3>Lista de Clientes</h3>
+      <table><thead><tr><th>ID</th><th>Nome</th><th>Torre</th><th>Ações</th></tr></thead><tbody id="ctb"></tbody></table>
+      <div class="pag" id="pag-clientes"></div>
+    </div>
+  </div>
+
+  <!-- PÁGINA: ÚLTIMO LOGIN -->
+  <div class="pg" id="pg-ultimo-login">
+    <div class="fb">
+        <div class="fg"><label>Filtrar por Torre</label><select id="l-f-torre" onchange="renderLogins()"></select></div>
+        <div class="fg"><label>Filtrar por Analista</label><select id="l-f-analista" onchange="renderLogins()"></select></div>
+        <div class="fg"><label>Filtrar por Cliente</label><select id="l-f-cliente" onchange="renderLogins()"></select></div>
+        <div class="fg"><label>Filtrar por Data</label><input type="date" id="l-f-data" onchange="renderLogins()"></div>
+    </div>
+    <div class="tw"><h3>Registros de Último Login</h3>
+      <table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Último Login</th><th>Ações</th></tr></thead><tbody id="ltb"></tbody></table>
+      <div class="pag" id="pag-logins"></div>
+    </div>
   </div>
   
-<div class="tw"><h3>Registros de Último Login</h3>
-<table><thead><tr><th>ID</th><th>Torre</th><th>Analista</th><th>Cliente</th><th>Último Login</th><th>Dias</th><th>Status</th><th>Ações</th></tr></thead><tbody id="l-tb"></tbody></table>
-<div class="pag" id="pag-logins"></div>
-</div>
-</div>
+</div> <!-- FIM DO <div class="wrap"> -->
 
-</div>
   
 
 <script>
