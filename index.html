@@ -816,6 +816,9 @@ function delAnalista(id, nome) {
   });
 }
 
+/* ═══════════════════════════════════════
+   RENDER CLIENTES (com paginação)
+   ═══════════════════════════════════════ */
 function renderClientes() {
   var ft = document.getElementById('f-ct').value;
   var fn = document.getElementById('f-cn').value.toLowerCase();
@@ -834,14 +837,13 @@ function renderClientes() {
     : paged.map(function(c) {
         return '<tr>' +
           '<td>' + c.id + '</td><td>' + c.nome + '</td><td>' + tNome(c.torre_id) + '</td>' +
-          '<td><button class="bs bdr" onclick="delCliente(' + c.id + ')">🗑️</button></td></tr>';
+          '<td><button class="bs bdr" onclick="delCliente(' + c.id + ',\'' + c.nome.replace(/'/g,"\\'") + '\')">🗑️</button></td></tr>';
       }).join('');
 
   renderPag('pag-clientes', filtered.length, pgClientes, 'goPageClientes');
 }
 
 function goPageClientes(p) { pgClientes = p; renderClientes(); }
-
 async function addCliente() {
   const nome = document.getElementById('i-cn').value.trim();
   const torre_id = document.getElementById('i-ct').value;
