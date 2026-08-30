@@ -707,7 +707,7 @@ function populateAllSelects() {
   });
 }
 
-function renderDashboard() {
+function renderDash() {
   const lib = acessos.filter(a => a.status === 'liberado').length;
   const pend = acessos.filter(a => a.status === 'pendente').length;
   document.getElementById('k1').textContent = torres.length;
